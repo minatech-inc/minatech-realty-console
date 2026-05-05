@@ -1,0 +1,14 @@
+# Wrangler cache (Cloudflare Workers)
+worker/.wrangler/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Backup
+*.bak
+*.swp
