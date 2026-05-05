@@ -1,0 +1,12 @@
+name = "reinfolib-proxy"
+main = "reinfolib-proxy.js"
+compatibility_date = "2024-10-01"
+
+# デプロイ前にAPIキーを Secret として登録:
+#   wrangler secret put REINFOLIB_API_KEY
+#
+# デプロイ:
+#   wrangler deploy
+#
+# ローカル開発:
+#   wrangler dev

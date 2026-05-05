@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c9a96e"/>
+      <stop offset="100%" stop-color="#dbc291"/>
+    </linearGradient>
+    <linearGradient id="navyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#005bac"/>
+      <stop offset="100%" stop-color="#00a0e9"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#navyGrad)"/>
+  <polygon points="32,14 16,28 48,28" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="20" y="28" width="24" height="18" rx="2" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
+  <rect x="28" y="34" width="8" height="12" rx="1" fill="url(#goldGrad)" opacity="0.6"/>
+  <circle cx="44" cy="42" r="7" fill="none" stroke="#fff" stroke-width="2"/>
+  <line x1="49" y1="47" x2="54" y2="52" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  <polyline points="40,41 43,44 48,38" fill="none" stroke="#c9a96e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

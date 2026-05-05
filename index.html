@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinaTech Realty Console | 不動産仲介業務統合プラットフォーム</title>
+    <meta name="description" content="不動産仲介業務をワンストップで支える統合コンソール。物件評価・SUUMO入稿・画像処理・取引先管理を一画面で。">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css?v=20260424e">
+    <script>
+      // テーマ初期化（FOUC防止のため<head>で実行）
+      (function() {
+        var t;
+        try { t = localStorage.getItem('rc_theme'); } catch (e) {}
+        document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+      })();
+    </script>
+</head>
+<body>
+    <!-- ライセンス認証モーダル -->
+    <div id="license-modal" class="license-modal">
+        <div class="license-modal-content">
+            <div class="license-modal-header" style="display:flex;align-items:center;gap:12px;justify-content:center;">
+                <span class="brand-mini-mark">M</span>
+                <span style="font-size:18px;font-weight:700;letter-spacing:-0.01em;">MinaTech Realty Console</span>
+            </div>
+            <h2>ライセンス認証</h2>
+            <p class="license-modal-desc">本ツールの利用にはライセンスキーが必要です。<br>キーをお持ちでない方は MinaTech までお問い合わせください。</p>
+            <div class="license-input-wrap">
+                <input type="text" id="license-key-input" placeholder="RA-STD-XXXXXXXX-XXXX-XXXXXXXX" autocomplete="off" spellcheck="false">
+                <button id="btn-license-activate" class="btn btn-primary">認証する</button>
+            </div>
+            <div id="license-error" class="license-error" style="display:none;"></div>
+            <div class="license-modal-footer">
+                <a href="terms.html">利用規約</a>
+                <span>|</span>
+                <a href="mailto:isoya.h@minatech1210.com">お問い合わせ</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo brand-mini">
+                <span class="brand-mini-mark">M</span>
+                <span class="brand-mini-text">
+                    <span class="brand-mini-name">MinaTech Realty Console</span>
+                    <span class="brand-mini-sub">Property Operations Platform</span>
+                </span>
+            </div>
+            <div class="header-right">
+                <button id="btn-property-master-header" class="btn btn-outline btn-sm" title="物件マスタDB（永続保存）" style="margin-right:8px;">物件マスタ</button>
+                <button id="btn-image-processor-header" class="btn btn-outline btn-sm" title="画像のSUUMO規格リサイズ・自動マスキング" style="margin-right:8px;">画像処理</button>
+                <button id="btn-suumo-broker-header" class="btn btn-outline btn-sm" title="SUUMO入稿用の業者情報マスタを設定" style="margin-right:10px;">業者情報設定</button>
+                <div class="theme-toggle" role="group" aria-label="テーマ切替" style="margin-right:10px;">
+                    <button id="theme-light" type="button" class="active" title="ライトモード" aria-label="ライトモード">☀</button>
+                    <button id="theme-dark"  type="button" title="ダークモード" aria-label="ダークモード">☾</button>
+                </div>
+                <div id="license-status" class="license-status"></div>
+                <div class="header-badge">宅建業者専用</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main">
+        <!-- ステップ案内 -->
+        <section class="steps">
+            <div class="step">
+                <span class="step-num">1</span>
+                <span class="step-text">レインズで物件を検索</span>
+            </div>
+            <div class="step-arrow">&rarr;</div>
+            <div class="step">
+                <span class="step-num">2</span>
+                <span class="step-text">物件詳細をコピー</span>
+            </div>
+            <div class="step-arrow">&rarr;</div>
+            <div class="step">
+                <span class="step-num">3</span>
+                <span class="step-text">ここに貼り付け</span>
+            </div>
+            <div class="step-arrow">&rarr;</div>
+            <div class="step">
+                <span class="step-num">4</span>
+                <span class="step-text">自動評価＆エクスポート</span>
+            </div>
+        </section>
+
+        <!-- 入力エリア -->
+        <section class="input-section">
+            <div class="input-header">
+                <h2>物件データ入力</h2>
+                <div class="input-actions">
+                    <button id="btn-sample" class="btn btn-outline" title="サンプルデータで試す">サンプルで試す</button>
+                    <button id="btn-clear" class="btn btn-outline-danger">クリア</button>
+                </div>
+            </div>
+
+            <div class="analysis-config">
+                <div class="config-group">
+                    <label class="config-label">物件カテゴリ</label>
+                    <div class="radio-group" id="category-group">
+                        <label><input type="radio" name="category" value="apartment" checked> 一棟収益</label>
+                        <label><input type="radio" name="category" value="condo"> 区分マンション</label>
+                        <label><input type="radio" name="category" value="house"> 戸建</label>
+                        <label><input type="radio" name="category" value="tenant"> テナント/事業用</label>
+                        <label><input type="radio" name="category" value="land"> 土地</label>
+                    </div>
+                </div>
+                <div class="config-group">
+                    <label class="config-label">分析モード</label>
+                    <div class="radio-group" id="mode-group">
+                        <label><input type="radio" name="mode" value="investment" checked> 投資（収益・融資重視）</label>
+                        <label><input type="radio" name="mode" value="enduser"> 実需（将来価値・出口重視）</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 区分マンション専用 追加入力パネル -->
+            <div id="condo-panel" class="condo-panel" style="display:none;">
+                <div class="condo-panel-header">
+                    <strong>区分マンション専用 追加情報</strong>
+                    <span class="condo-hint">（任意・空欄でも解析可能。入力すると実質利回り・管理組合健全性も評価します）</span>
+                </div>
+                <div class="condo-grid">
+                    <div class="condo-field">
+                        <label>管理費（円/月）</label>
+                        <input type="number" id="condo-kanri" placeholder="例: 15000">
+                    </div>
+                    <div class="condo-field">
+                        <label>修繕積立金（円/月）</label>
+                        <input type="number" id="condo-shuzen" placeholder="例: 12000">
+                    </div>
+                    <div class="condo-field">
+                        <label>修繕積立基金（一時金・円）</label>
+                        <input type="number" id="condo-kikin" placeholder="例: 300000">
+                    </div>
+                    <div class="condo-field">
+                        <label>所在階 / 総階数</label>
+                        <input type="text" id="condo-floor" placeholder="例: 8/15">
+                    </div>
+                    <div class="condo-field">
+                        <label>向き</label>
+                        <select id="condo-direction">
+                            <option value="">（未入力）</option>
+                            <option>南</option><option>南東</option><option>南西</option>
+                            <option>東</option><option>西</option>
+                            <option>北東</option><option>北西</option><option>北</option>
+                        </select>
+                    </div>
+                    <div class="condo-field">
+                        <label>管理形態</label>
+                        <select id="condo-mgmt">
+                            <option value="">（未入力）</option>
+                            <option>全部委託</option>
+                            <option>一部委託</option>
+                            <option>自主管理</option>
+                        </select>
+                    </div>
+                    <div class="condo-field">
+                        <label>大規模修繕実施回数</label>
+                        <input type="number" id="condo-daishu-count" placeholder="例: 2" min="0">
+                    </div>
+                    <div class="condo-field">
+                        <label>直近の大規模修繕実施年</label>
+                        <input type="number" id="condo-daishu-year" placeholder="例: 2018" min="1970" max="2030">
+                    </div>
+                    <div class="condo-field">
+                        <label>長期修繕計画</label>
+                        <select id="condo-plan">
+                            <option value="">（未入力）</option>
+                            <option value="yes">策定済み</option>
+                            <option value="no">未策定</option>
+                        </select>
+                    </div>
+                    <div class="condo-field">
+                        <label>管理組合 借入金残高（万円）</label>
+                        <input type="number" id="condo-loan" placeholder="0=なし" min="0">
+                    </div>
+                    <div class="condo-field">
+                        <label>管理組合 積立金残高（万円）</label>
+                        <input type="number" id="condo-reserve" placeholder="例: 5000" min="0">
+                    </div>
+                    <div class="condo-field">
+                        <label>滞納世帯率（%）</label>
+                        <input type="number" id="condo-taino" placeholder="例: 2" min="0" max="100" step="0.1">
+                    </div>
+                    <div class="condo-field">
+                        <label>駐車場権利</label>
+                        <select id="condo-parking">
+                            <option value="">（未入力）</option>
+                            <option>敷地権あり</option>
+                            <option>使用権（抽選）</option>
+                            <option>なし</option>
+                        </select>
+                    </div>
+                    <div class="condo-field">
+                        <label>ペット可否</label>
+                        <select id="condo-pet">
+                            <option value="">（未入力）</option>
+                            <option value="yes">可</option>
+                            <option value="no">不可</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="input-tabs">
+                <button class="tab active" data-tab="paste">テキスト貼り付け</button>
+                <button class="tab" data-tab="manual">手動入力</button>
+                <button class="tab" data-tab="pdf">PDF/マイソク</button>
+            </div>
+
+            <!-- テキスト貼り付けタブ -->
+            <div id="tab-paste" class="tab-content active">
+                <textarea id="paste-area" placeholder="レインズの物件詳細ページのテキストをコピーして、ここに貼り付けてください。&#10;&#10;【対応フォーマット】&#10;・物件詳細ページ全体のコピー&#10;・複数物件の連続貼り付け（区切り線で自動分割）&#10;・タブ区切りの一覧コピー&#10;&#10;Ctrl+V で貼り付け"></textarea>
+                <button id="btn-parse" class="btn btn-primary btn-lg">解析する</button>
+            </div>
+
+            <!-- 手動入力タブ -->
+            <div id="tab-manual" class="tab-content">
+                <form id="manual-form" class="manual-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>物件名・案件名</label>
+                            <input type="text" name="物件名" placeholder="例: 藤沢市南藤沢 一棟マンション">
+                        </div>
+                        <div class="form-group">
+                            <label>所在地</label>
+                            <input type="text" name="所在地" placeholder="例: 神奈川県藤沢市南藤沢3-12">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>価格（万円）</label>
+                            <input type="number" name="価格(万円)" placeholder="例: 3500">
+                        </div>
+                        <div class="form-group">
+                            <label>表面利回り（%）</label>
+                            <input type="number" name="表面利回り(%)" step="0.01" placeholder="例: 12.5">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>最寄駅・徒歩（分）</label>
+                            <input type="text" name="駅徒歩(分)" placeholder="例: JR藤沢駅 徒歩5分">
+                        </div>
+                        <div class="form-group">
+                            <label>面積（㎡）</label>
+                            <input type="text" name="面積(㎡)" placeholder="例: 250.5">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>構造</label>
+                            <input type="text" name="構造" placeholder="例: RC造 3階建">
+                        </div>
+                        <div class="form-group">
+                            <label>築年月</label>
+                            <input type="text" name="築年月" placeholder="例: 1995年3月">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>土地面積（㎡）</label>
+                            <input type="text" name="土地面積(㎡)" placeholder="例: 180.2">
+                        </div>
+                        <div class="form-group">
+                            <label>建物面積（㎡）</label>
+                            <input type="text" name="建物面積(㎡)" placeholder="例: 320.8">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>現況（空室/賃貸中）</label>
+                            <input type="text" name="現況" placeholder="例: 賃貸中（満室）">
+                        </div>
+                        <div class="form-group">
+                            <label>備考</label>
+                            <input type="text" name="備考" placeholder="自由記入">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">この物件を追加</button>
+                </form>
+            </div>
+
+            <!-- PDF/マイソク取り込みタブ -->
+            <div id="tab-pdf" class="tab-content">
+                <div id="pdf-drop" class="pdf-drop">
+                    <div class="pdf-drop-icon">📄</div>
+                    <div class="pdf-drop-text">物件概要書（マイソク）PDF / 画像をドラッグ＆ドロップ</div>
+                    <div class="pdf-drop-sub">または下のボタンから選択（PDF・JPG・PNG 複数可）</div>
+                    <input type="file" id="pdf-file" accept=".pdf,image/*" multiple style="display:none;">
+                    <button type="button" id="btn-pdf-select" class="btn btn-primary">ファイルを選択</button>
+                </div>
+                <div class="pdf-options">
+                    <label class="pdf-option">
+                        <input type="checkbox" id="pdf-use-vision">
+                        <span>Vision AI併用（Claude Haiku／有料・1件約¥1）</span>
+                    </label>
+                    <button type="button" id="btn-pdf-settings" class="btn btn-outline btn-sm">API設定</button>
+                </div>
+                <div class="pdf-options">
+                    <label class="pdf-option">
+                        <input type="checkbox" id="use-reinfolib">
+                        <span>取引事例比較法（国交省不動産情報ライブラリ・無料登録制）</span>
+                    </label>
+                    <button type="button" id="btn-reinfolib-settings" class="btn btn-outline btn-sm">API設定</button>
+                </div>
+                <div id="pdf-progress" class="pdf-progress" style="display:none;">
+                    <div class="pdf-progress-bar"><div id="pdf-progress-fill"></div></div>
+                    <div id="pdf-progress-text" class="pdf-progress-text">準備中...</div>
+                </div>
+                <div id="pdf-log" class="pdf-log"></div>
+            </div>
+        </section>
+
+        <!-- 不動産情報ライブラリAPI設定モーダル -->
+        <div id="reinfolib-settings-modal" class="license-modal" style="display:none;">
+            <div class="license-modal-content">
+                <h2>不動産情報ライブラリ API設定</h2>
+                <p class="license-modal-desc">
+                    国土交通省「不動産情報ライブラリ」の取引価格情報・地価公示APIを使って実取引価格・公示地価と比較します。<br>
+                    <strong>推奨: プロキシ経由</strong>（CORS回避＋APIキー秘匿）。プロキシURLを入力すればキーは不要です。<br>
+                    プロキシを立てない場合のみ、下の「APIキー直接入力」欄を使ってください（localStorageに平文保存）。<br>
+                    <a href="https://www.reinfolib.mlit.go.jp/help/apiManual/" target="_blank" rel="noopener">API利用登録はこちら</a>
+                </p>
+                <div class="license-input-wrap">
+                    <label style="font-size:12px;color:#666;">プロキシURL（推奨）</label>
+                    <input type="text" id="reinfolib-proxy-input" placeholder="https://reinfolib-proxy.xxx.workers.dev" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="license-input-wrap" style="margin-top:12px;">
+                    <label style="font-size:12px;color:#666;">APIキー直接入力（プロキシ未使用時のみ）</label>
+                    <input type="password" id="reinfolib-key-input" placeholder="Ocp-Apim-Subscription-Key" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="license-modal-footer" style="justify-content:flex-end;gap:12px;">
+                    <button id="btn-reinfolib-cancel" class="btn btn-outline">キャンセル</button>
+                    <button id="btn-reinfolib-save" class="btn btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- API設定モーダル -->
+        <div id="pdf-settings-modal" class="license-modal" style="display:none;">
+            <div class="license-modal-content">
+                <h2>Vision API 設定</h2>
+                <p class="license-modal-desc">
+                    PDF/画像のOCRが失敗した際にClaude Haiku Vision APIへフォールバックします。<br>
+                    キーはこのブラウザのlocalStorageにのみ保存され、送信先はAnthropic APIのみです。
+                </p>
+                <div class="license-input-wrap">
+                    <input type="password" id="anthropic-key-input" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
+                </div>
+                <div class="license-modal-footer" style="justify-content:flex-end;gap:12px;">
+                    <button id="btn-pdf-settings-cancel" class="btn btn-outline">キャンセル</button>
+                    <button id="btn-pdf-settings-save" class="btn btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 解析結果 -->
+        <section id="results-section" class="results-section" style="display:none;">
+            <div class="results-header">
+                <h2>解析結果 <span id="result-count"></span></h2>
+                <div class="results-actions">
+                    <button id="btn-export-csv" class="btn btn-outline">CSV出力</button>
+                    <button id="btn-export-excel" class="btn btn-outline">Excel出力</button>
+                    <button id="btn-export-json" class="btn btn-outline">JSON出力</button>
+                    <button id="btn-export-pdf" class="btn btn-outline">PDFレポート</button>
+                    <button id="btn-export-bank" class="btn btn-outline">銀行担保評価書</button>
+                    <button id="btn-suumo-export" class="btn btn-primary" title="SUUMO入稿シートを生成">SUUMO入稿</button>
+                    <button id="btn-suumo-broker" class="btn btn-outline" title="SUUMO入稿用の業者情報マスタ設定">業者情報</button>
+                    <button id="btn-save-master" class="btn btn-outline" title="物件マスタDBへ永続保存">マスタに保存</button>
+                    <button id="btn-save-history" class="btn btn-outline">履歴に保存</button>
+                    <button id="btn-open-history" class="btn btn-outline">履歴/比較</button>
+                </div>
+            </div>
+
+            <!-- 履歴モーダル -->
+            <div id="history-modal" class="license-modal" style="display:none;">
+                <div class="license-modal-content" style="max-width:720px;">
+                    <h2>解析履歴</h2>
+                    <p class="license-note">保存済みの解析を読み込む、または2件選択して比較できます。</p>
+                    <div id="history-list" style="max-height:420px;overflow:auto;margin:16px 0;"></div>
+                    <div class="license-actions">
+                        <button id="btn-history-compare" class="btn btn-primary">選択した2件を比較</button>
+                        <button id="btn-history-close" class="btn btn-outline">閉じる</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 比較モーダル -->
+            <div id="compare-modal" class="license-modal" style="display:none;">
+                <div class="license-modal-content" style="max-width:960px;">
+                    <h2>物件比較</h2>
+                    <div id="compare-body" style="max-height:520px;overflow:auto;margin:16px 0;"></div>
+                    <div class="license-actions">
+                        <button id="btn-compare-close" class="btn btn-outline">閉じる</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- サマリーカード -->
+            <div class="summary-cards">
+                <div class="summary-card s-rank">
+                    <div class="summary-rank">S</div>
+                    <div class="summary-label">即日対応</div>
+                    <div class="summary-count" id="count-s">0</div>
+                </div>
+                <div class="summary-card a-rank">
+                    <div class="summary-rank">A</div>
+                    <div class="summary-label">今週対応</div>
+                    <div class="summary-count" id="count-a">0</div>
+                </div>
+                <div class="summary-card b-rank">
+                    <div class="summary-rank">B</div>
+                    <div class="summary-label">今月検討</div>
+                    <div class="summary-count" id="count-b">0</div>
+                </div>
+                <div class="summary-card c-rank">
+                    <div class="summary-rank">C</div>
+                    <div class="summary-label">見送り</div>
+                    <div class="summary-count" id="count-c">0</div>
+                </div>
+            </div>
+
+            <!-- 物件カード一覧 -->
+            <div id="property-cards" class="property-cards"></div>
+
+            <!-- テーブル表示 -->
+            <div class="table-toggle">
+                <button id="btn-table-view" class="btn btn-outline btn-sm">テーブル表示に切り替え</button>
+            </div>
+            <div id="table-container" class="table-container" style="display:none;">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>評価</th>
+                            <th>スコア</th>
+                            <th>物件名</th>
+                            <th>所在地</th>
+                            <th>価格(万円)</th>
+                            <th>利回り(%)</th>
+                            <th>駅徒歩</th>
+                            <th>構造</th>
+                            <th>面積</th>
+                            <th>判断根拠</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="terms.html">利用規約</a>
+                <span>|</span>
+                <a href="mailto:isoya.h@minatech1210.com">お問い合わせ</a>
+                <span>|</span>
+                <a href="#" id="btn-change-license">ライセンス変更</a>
+            </div>
+            <p class="footer-legal">
+                本ツールはレインズの自動アクセス・スクレイピングを一切行いません。<br>
+                ユーザーが手動でコピーしたテキストをローカルで解析するのみです。<br>
+                通常処理は全てブラウザ内で完結します。<br>
+                ※Vision AI併用ONの場合のみ、OCR失敗時にAnthropic APIへ画像を送信します（任意・デフォルトOFF）。
+            </p>
+            <p class="footer-copy">&copy; MinaTech株式会社 All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}</script>
+    <script src="license.js?v=20260424e"></script>
+    <script src="parser.js?v=20260424e"></script>
+    <script src="category.js?v=20260424e"></script>
+    <script src="market.js?v=20260424e"></script>
+    <script src="landprice.js?v=20260424e"></script>
+    <script src="geocode.js?v=20260424e"></script>
+    <script src="reinfolibClient.js?v=20260424e"></script>
+    <script src="hazardGeo.js?v=20260424e"></script>
+    <script src="cityPlanGeo.js?v=20260424e"></script>
+    <script src="amenityGeo.js?v=20260424e"></script>
+    <script src="populationGeo.js?v=20260424e"></script>
+    <script src="appraisal.js?v=20260424e"></script>
+    <script src="hazard.js?v=20260424e"></script>
+    <script src="explanation.js?v=20260424e"></script>
+    <script src="scorer.js?v=20260424e"></script>
+    <script src="history.js?v=20260424e"></script>
+    <script src="bankReport.js?v=20260424e"></script>
+    <script src="suumoSpec.js?v=20260424e"></script>
+    <script src="suumoFeatures.js?v=20260424e"></script>
+    <script src="suumoExporter.js?v=20260424e"></script>
+    <script src="suumoUI.js?v=20260424e"></script>
+    <script src="propertyMaster.js?v=20260424e"></script>
+    <script src="propertyMasterUI.js?v=20260424e"></script>
+    <script src="imageProcessor.js?v=20260424e"></script>
+    <script src="imageProcessorUI.js?v=20260424e"></script>
+    <script src="app.js?v=20260424e"></script>
+    <script src="pdf-analyzer.js?v=20260424e"></script>
+</body>
+</html>

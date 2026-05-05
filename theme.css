@@ -1,0 +1,384 @@
+/* ============================================
+   MinaTech Realty Console — Theme Layer
+   既存style.cssの上から重ねるモダンテーマ
+   :root[data-theme="light"] (default) / [data-theme="dark"] 切替
+   Dashboard共通カラー(accent-blue/purple/cyan)で統一
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap');
+
+/* === デザイントークン（ライト既定） === */
+:root, :root[data-theme="light"] {
+  /* Surface */
+  --rc-bg:           #f7f8fb;
+  --rc-bg-soft:      #eef1f6;
+  --rc-surface:      #ffffff;
+  --rc-surface-hi:   #ffffff;
+  --rc-surface-elev: rgba(255,255,255,0.85);
+  --rc-glass:        rgba(255,255,255,0.65);
+
+  /* Border */
+  --rc-border:       #e3e8ef;
+  --rc-border-soft:  #eef1f6;
+  --rc-border-strong:#d1d8e2;
+
+  /* Text */
+  --rc-text:         #1f2937;
+  --rc-text-2:       #4b5563;
+  --rc-text-3:       #6b7280;
+  --rc-text-mute:    #9ca3af;
+
+  /* Accent (dashboardと共通) */
+  --rc-accent:       #3b82f6;  /* blue */
+  --rc-accent-hover: #2563eb;
+  --rc-accent-soft:  rgba(59,130,246,0.10);
+  --rc-purple:       #8b5cf6;
+  --rc-cyan:         #06b6d4;
+  --rc-grad:         linear-gradient(135deg,#3b82f6 0%,#8b5cf6 100%);
+
+  /* Status */
+  --rc-success:      #10b981;
+  --rc-warning:      #f59e0b;
+  --rc-danger:       #ef4444;
+  --rc-info:         #3b82f6;
+
+  /* Effects */
+  --rc-shadow-sm:    0 1px 2px rgba(15,23,42,0.04);
+  --rc-shadow:       0 4px 16px rgba(15,23,42,0.06), 0 2px 4px rgba(15,23,42,0.04);
+  --rc-shadow-lg:    0 12px 40px rgba(15,23,42,0.10);
+  --rc-shadow-glow:  0 0 0 4px rgba(59,130,246,0.12);
+  --rc-radius-sm:    8px;
+  --rc-radius:       12px;
+  --rc-radius-lg:    16px;
+
+  --rc-font-sans:    'Inter','Noto Sans JP','Hiragino Sans','Yu Gothic',system-ui,sans-serif;
+  --rc-font-mono:    'JetBrains Mono','SF Mono',Consolas,monospace;
+}
+
+/* === ダークテーマ === */
+:root[data-theme="dark"] {
+  --rc-bg:           #0d1117;
+  --rc-bg-soft:      #111726;
+  --rc-surface:      #1a2236;
+  --rc-surface-hi:   #232c44;
+  --rc-surface-elev: rgba(26,34,54,0.7);
+  --rc-glass:        rgba(255,255,255,0.04);
+
+  --rc-border:       rgba(255,255,255,0.08);
+  --rc-border-soft:  rgba(255,255,255,0.04);
+  --rc-border-strong:rgba(255,255,255,0.16);
+
+  --rc-text:         #f5f7fa;
+  --rc-text-2:       #c5cdd9;
+  --rc-text-3:       #a8b2c5;
+  --rc-text-mute:    #6b7589;
+
+  --rc-accent-soft:  rgba(59,130,246,0.16);
+
+  --rc-shadow-sm:    0 1px 2px rgba(0,0,0,0.3);
+  --rc-shadow:       0 4px 16px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+  --rc-shadow-lg:    0 12px 40px rgba(0,0,0,0.5);
+  --rc-shadow-glow:  0 0 0 4px rgba(59,130,246,0.25);
+}
+
+/* === グローバル上書き === */
+html, body {
+  font-family: var(--rc-font-sans) !important;
+  background: var(--rc-bg) !important;
+  color: var(--rc-text) !important;
+  font-feature-settings: "palt", "kern";
+}
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120,119,198,0.15), transparent),
+    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(59,130,246,0.08), transparent),
+    var(--rc-bg) !important;
+  background-attachment: fixed;
+}
+
+/* === ヘッダー（ガラス・グラデアクセント） === */
+.header {
+  background: var(--rc-surface-elev) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid var(--rc-border-soft) !important;
+  box-shadow: var(--rc-shadow-sm) !important;
+  color: var(--rc-text) !important;
+}
+.header-inner { max-width: 1280px !important; height: 60px !important; }
+.logo-icon {
+  background: var(--rc-grad) !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+  box-shadow: 0 6px 20px rgba(59,130,246,0.35);
+}
+.logo-text strong { color: var(--rc-text) !important; font-weight: 700 !important; letter-spacing: -0.01em; }
+.logo-text small  { color: var(--rc-text-3) !important; }
+.header-badge {
+  background: var(--rc-accent-soft) !important;
+  border: 1px solid var(--rc-accent) !important;
+  color: var(--rc-accent) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* === ヘッダー右側ボタン === */
+.header-right .btn-sm {
+  background: var(--rc-surface) !important;
+  border: 1px solid var(--rc-border) !important;
+  color: var(--rc-text-2) !important;
+  font-weight: 500 !important;
+  border-radius: var(--rc-radius-sm) !important;
+  transition: all 0.15s ease;
+}
+.header-right .btn-sm:hover {
+  background: var(--rc-accent-soft) !important;
+  border-color: var(--rc-accent) !important;
+  color: var(--rc-accent) !important;
+  transform: translateY(-1px);
+}
+
+/* === メインカード === */
+.main { max-width: 1280px !important; }
+.steps, .input-section, .results-section, .summary-card,
+.history-modal-content, .compare-modal-content {
+  background: var(--rc-surface) !important;
+  border: 1px solid var(--rc-border) !important;
+  border-radius: var(--rc-radius-lg) !important;
+  box-shadow: var(--rc-shadow) !important;
+  color: var(--rc-text) !important;
+}
+
+/* === ボタン === */
+.btn {
+  font-family: inherit !important;
+  font-weight: 500 !important;
+  border-radius: var(--rc-radius-sm) !important;
+  transition: all 0.15s ease !important;
+  letter-spacing: 0 !important;
+}
+.btn-primary {
+  background: var(--rc-accent) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.25) !important;
+}
+.btn-primary:hover {
+  background: var(--rc-accent-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59,130,246,0.35) !important;
+}
+.btn-outline {
+  background: transparent !important;
+  color: var(--rc-text-2) !important;
+  border: 1px solid var(--rc-border-strong) !important;
+}
+.btn-outline:hover {
+  background: var(--rc-accent-soft) !important;
+  color: var(--rc-accent) !important;
+  border-color: var(--rc-accent) !important;
+}
+
+/* === 入力 === */
+input[type="text"], input[type="password"], input[type="number"], textarea, select {
+  font-family: inherit !important;
+  background: var(--rc-surface) !important;
+  border: 1px solid var(--rc-border) !important;
+  border-radius: var(--rc-radius-sm) !important;
+  color: var(--rc-text) !important;
+  transition: all 0.15s ease;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: var(--rc-accent) !important;
+  box-shadow: var(--rc-shadow-glow) !important;
+}
+
+/* === ステップインジケータ === */
+.step {
+  background: transparent !important;
+  color: var(--rc-text-2) !important;
+}
+.step .step-num {
+  background: var(--rc-grad) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.25);
+}
+.step.active { color: var(--rc-accent) !important; font-weight: 600 !important; }
+
+/* === タブ === */
+.tab {
+  color: var(--rc-text-3) !important;
+  border-bottom: 2px solid transparent !important;
+  transition: all 0.15s ease;
+}
+.tab:hover { color: var(--rc-text) !important; }
+.tab.active {
+  color: var(--rc-accent) !important;
+  border-bottom-color: var(--rc-accent) !important;
+  font-weight: 600 !important;
+}
+
+/* === ラジオ・チェックボックス === */
+input[type="radio"], input[type="checkbox"] { accent-color: var(--rc-accent); }
+
+/* === テーブル === */
+table {
+  background: var(--rc-surface) !important;
+  border-radius: var(--rc-radius) !important;
+  overflow: hidden;
+}
+table th {
+  background: var(--rc-bg-soft) !important;
+  color: var(--rc-text-2) !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid var(--rc-border) !important;
+}
+table td { border-bottom: 1px solid var(--rc-border-soft) !important; color: var(--rc-text) !important; }
+table tr:hover td { background: var(--rc-accent-soft) !important; }
+
+/* === 結果カード(ランクバッジ等) === */
+.rank-badge, .property-rank { font-weight: 700 !important; letter-spacing: 0.5px !important; }
+.rank-S { background: linear-gradient(135deg,#ef4444,#f59e0b) !important; color:#fff !important; }
+.rank-A { background: linear-gradient(135deg,#3b82f6,#06b6d4) !important; color:#fff !important; }
+.rank-B { background: linear-gradient(135deg,#8b5cf6,#3b82f6) !important; color:#fff !important; }
+.rank-C { background: var(--rc-text-mute) !important; color:#fff !important; }
+
+/* === SUUMOモーダル等の透過オーバーレイ === */
+.suumo-modal-overlay { background: rgba(15,23,42,0.55) !important; backdrop-filter: blur(4px); }
+.suumo-modal-content {
+  background: var(--rc-surface) !important;
+  border: 1px solid var(--rc-border) !important;
+  border-radius: var(--rc-radius-lg) !important;
+  color: var(--rc-text) !important;
+  box-shadow: var(--rc-shadow-lg) !important;
+}
+
+/* === ライセンスモーダル === */
+.license-modal { background: rgba(15,23,42,0.65) !important; backdrop-filter: blur(8px); }
+.license-modal-content {
+  background: var(--rc-surface) !important;
+  border-radius: var(--rc-radius-lg) !important;
+  box-shadow: var(--rc-shadow-lg) !important;
+  border: 1px solid var(--rc-border) !important;
+}
+
+/* === スクロールバー(WebKit) === */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--rc-border-strong);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--rc-text-mute); background-clip: content-box; }
+
+/* === テーマトグル === */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: var(--rc-bg-soft);
+  border: 1px solid var(--rc-border);
+  border-radius: 999px;
+  padding: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.theme-toggle button {
+  border: none;
+  background: transparent;
+  width: 28px; height: 28px;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--rc-text-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+.theme-toggle button.active {
+  background: var(--rc-surface);
+  color: var(--rc-accent);
+  box-shadow: var(--rc-shadow-sm);
+}
+
+/* === ブランドロゴ刷新 === */
+.brand-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--rc-font-sans);
+}
+.brand-mini-mark {
+  width: 36px; height: 36px;
+  background: var(--rc-grad);
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 6px 20px rgba(59,130,246,0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+.brand-mini-mark::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+  pointer-events: none;
+}
+.brand-mini-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.brand-mini-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--rc-text);
+  letter-spacing: -0.01em;
+}
+.brand-mini-sub {
+  font-size: 10px;
+  color: var(--rc-text-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* === ステップカード モダン化 === */
+.step {
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  transition: all 0.15s ease;
+}
+.step-arrow { color: var(--rc-text-mute) !important; }
+
+/* === フォームセクションセパレータ === */
+.section-sep {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--rc-border), transparent);
+  margin: 24px 0;
+}
+
+/* === スコアセル === */
+.score-cell, .score-num {
+  font-family: var(--rc-font-mono) !important;
+  font-weight: 700 !important;
+  font-feature-settings: "tnum";
+}
+
+/* === ヘルプテキスト === */
+.help-text, .form-help, small { color: var(--rc-text-3) !important; }
+
+/* === スマホ === */
+@media (max-width: 768px) {
+  .header-inner { height: auto !important; flex-wrap: wrap; padding: 8px 16px !important; }
+  .main { padding: 16px !important; }
+  .header-right { flex-wrap: wrap; gap: 6px; }
+}
