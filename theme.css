@@ -96,6 +96,12 @@ html, body {
   background-attachment: fixed;
 }
 
+/* ダークモード時: ロゴ画像（黒色SVG）を反転表示 */
+:root[data-theme="dark"] .logo img,
+:root[data-theme="dark"] .license-modal-header img {
+  filter: invert(1) brightness(0.95) hue-rotate(180deg);
+}
+
 /* === ヘッダー（ガラス・グラデアクセント） === */
 .header {
   background: var(--rc-surface-elev) !important;
