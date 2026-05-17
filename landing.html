@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinaTech Realty Console | 宅建業者向け 不動産仲介業務統合プラットフォーム</title>
+    <meta name="description" content="物件評価・SUUMO入稿・画像処理・物件マスタ管理・銀行担保評価書まで、不動産仲介業務をワンストップで支える宅建業者専用ツール。トライアル14日間無料。">
+    <meta name="keywords" content="不動産仲介,業務効率化,SUUMO入稿,物件評価,銀行評価書,宅建業者向けツール,SaaS,湘南">
+    <link rel="canonical" href="https://realty.minatech1210.com/landing.html">
+    <meta property="og:title" content="MinaTech Realty Console | 宅建業者向け 不動産仲介業務統合プラットフォーム">
+    <meta property="og:description" content="物件評価・SUUMO入稿・画像処理・物件マスタを一画面で。宅建業者専用の業務統合ツール。14日間無料トライアル。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://realty.minatech1210.com/landing.html">
+    <meta property="og:image" content="https://realty.minatech1210.com/logo.svg">
+    <meta property="og:site_name" content="MinaTech Realty Console">
+    <meta property="og:locale" content="ja_JP">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "MinaTech Realty Console",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "url": "https://realty.minatech1210.com/",
+      "description": "宅建業者向け 不動産仲介業務統合プラットフォーム。物件評価・SUUMO入稿支援・画像処理・物件マスタ管理・銀行担保評価書作成を提供。",
+      "publisher": { "@type":"Organization", "name":"MinaTech株式会社", "url":"https://realestate.minatech1210.com/" },
+      "offers": [
+        { "@type":"Offer", "name":"トライアル", "price":"0", "priceCurrency":"JPY", "description":"14日間 1名" },
+        { "@type":"Offer", "name":"スタンダード", "description":"年契約 3名まで 全機能" },
+        { "@type":"Offer", "name":"プロフェッショナル", "description":"年契約 10名まで 全機能+カスタマイズ" }
+      ]
+    }
+    </script>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --bg-soft: #f7f8fb;
+            --text: #0f172a;
+            --text-soft: #475569;
+            --text-mute: #94a3b8;
+            --border: #e2e8f0;
+            --accent: #3b82f6;
+            --accent-2: #8b5cf6;
+            --success: #10b981;
+            --warn: #f59e0b;
+            --shadow: 0 8px 24px rgba(15,23,42,0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter','Noto Sans JP','Hiragino Sans','Yu Gothic',system-ui,sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; height: auto; }
+
+        /* ===== Header ===== */
+        .nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+        .nav-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .nav-brand-mark {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .nav-brand-text { font-size: 15px; }
+        .nav-brand-sub { font-size: 10px; color: var(--text-mute); display: block; letter-spacing: 0.04em; }
+        .nav-links { display: flex; gap: 6px; align-items: center; }
+        .nav-link {
+            padding: 8px 14px;
+            font-size: 13px;
+            color: var(--text-soft);
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        .nav-link:hover { background: var(--bg-soft); color: var(--text); }
+        .btn-primary {
+            display: inline-block;
+            padding: 10px 22px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.15s;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.25);
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(59,130,246,0.35); }
+        .btn-outline {
+            display: inline-block;
+            padding: 10px 22px;
+            background: #fff;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* ===== Hero ===== */
+        .hero {
+            padding: 100px 24px 80px;
+            background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 50%, #fdf4ff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59,130,246,0.15), transparent 70%);
+            border-radius: 50%;
+        }
+        .hero-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-soft);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+        .hero-badge strong { color: var(--accent); }
+        .hero h1 {
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            margin-bottom: 20px;
+        }
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero-desc {
+            font-size: clamp(15px, 2vw, 18px);
+            color: var(--text-soft);
+            max-width: 720px;
+            margin: 0 auto 36px;
+        }
+        .hero-cta {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .hero-cta .btn-primary { padding: 14px 32px; font-size: 14px; }
+        .hero-cta .btn-outline { padding: 14px 32px; font-size: 14px; }
+        .hero-note { font-size: 12px; color: var(--text-mute); }
+
+        /* ===== Section common ===== */
+        section { padding: 80px 24px; }
+        .section-inner { max-width: 1180px; margin: 0 auto; }
+        .section-label {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--bg-soft);
+            color: var(--accent);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: clamp(24px, 3.5vw, 36px);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 14px;
+            line-height: 1.3;
+        }
+        .section-desc {
+            font-size: 15px;
+            color: var(--text-soft);
+            max-width: 680px;
+        }
+        .section-head { text-align: center; margin-bottom: 56px; }
+        .section-head .section-desc { margin: 0 auto; }
+
+        /* ===== Pain Points ===== */
+        .pain { background: var(--bg-soft); }
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+        .pain-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+        .pain-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+        .pain-card h3 {
+            font-size: 15px;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        .pain-card p {
+            font-size: 13px;
+            color: var(--text-soft);
+            line-height: 1.7;
+        }
+
+        /* ===== Features ===== */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+            border-color: var(--accent);
+        }
+        .feature-num {
+            display: inline-block;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+        .feature-card h3 {
+            font-size: 17px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .feature-card p {
+            font-size: 13px;
+            color: var(--text-soft);
+            line-height: 1.8;
+        }
+        .feature-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .feature-tag {
+            font-size: 10px;
+            padding: 3px 8px;
+            background: var(--bg-soft);
+            color: var(--text-soft);
+            border-radius: 4px;
+        }
+
+        /* ===== Demo / Screenshot ===== */
+        .demo { background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%); }
+        .demo-mockup {
+            max-width: 920px;
+            margin: 40px auto 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 20px 60px rgba(15,23,42,0.12);
+            overflow: hidden;
+        }
+        .demo-bar {
+            background: #f1f5f9;
+            padding: 10px 16px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .demo-bar span {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+        .demo-bar span:nth-child(1) { background: #f87171; }
+        .demo-bar span:nth-child(2) { background: #fbbf24; }
+        .demo-bar span:nth-child(3) { background: #34d399; }
+        .demo-bar-url {
+            margin-left: 14px;
+            font-size: 11px;
+            color: var(--text-mute);
+            font-family: monospace;
+        }
+        .demo-content {
+            padding: 28px;
+            background: #fff;
+            min-height: 320px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .demo-panel {
+            background: var(--bg-soft);
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .demo-panel-title {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .demo-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+        }
+        .demo-stat:last-child { border: none; }
+        .demo-stat-val { font-weight: 600; }
+        .demo-score {
+            text-align: center;
+            padding: 20px;
+        }
+        .demo-score-num {
+            font-size: 56px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+        .demo-score-rank {
+            display: inline-block;
+            padding: 4px 14px;
+            background: #dc2626;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        .demo-score-label {
+            font-size: 11px;
+            color: var(--text-mute);
+            margin-top: 6px;
+        }
+
+        /* ===== Pricing ===== */
+        .pricing { background: var(--bg-soft); }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .price-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 32px 28px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .price-card.featured {
+            border-color: var(--accent);
+            border-width: 2px;
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(59,130,246,0.12);
+        }
+        .price-featured-label {
+            position: absolute;
+            top: -10px;
+            right: 24px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+        .price-name {
+            font-size: 13px;
+            color: var(--text-mute);
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .price-tagline {
+            font-size: 14px;
+            color: var(--text-soft);
+            margin-bottom: 20px;
+        }
+        .price-amount {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+        .price-amount .small { font-size: 14px; color: var(--text-mute); font-weight: 500; }
+        .price-period { font-size: 12px; color: var(--text-mute); margin-bottom: 22px; }
+        .price-features {
+            list-style: none;
+            margin-bottom: 26px;
+            padding: 0;
+            flex: 1;
+        }
+        .price-features li {
+            padding: 8px 0;
+            font-size: 13px;
+            color: var(--text-soft);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .price-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .price-features li.disabled { color: var(--text-mute); text-decoration: line-through; }
+        .price-features li.disabled::before { content: '×'; color: var(--text-mute); }
+        .price-cta {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.15s;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text);
+        }
+        .price-cta:hover { border-color: var(--accent); color: var(--accent); }
+        .price-card.featured .price-cta {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            border: none;
+        }
+        .price-card.featured .price-cta:hover { opacity: 0.92; }
+
+        /* ===== Trust / Compliance ===== */
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            text-align: center;
+        }
+        .trust-item {
+            padding: 24px 18px;
+        }
+        .trust-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            background: var(--bg-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .trust-item h4 {
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .trust-item p {
+            font-size: 12px;
+            color: var(--text-soft);
+            line-height: 1.7;
+        }
+
+        /* ===== FAQ ===== */
+        .faq-list {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+        }
+        .faq-q {
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            list-style: none;
+            color: var(--text);
+        }
+        .faq-q::-webkit-details-marker { display: none; }
+        .faq-q::after {
+            content: '+';
+            font-size: 22px;
+            font-weight: 300;
+            color: var(--accent);
+            transition: transform 0.2s;
+        }
+        details[open] .faq-q::after { transform: rotate(45deg); }
+        .faq-a {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--text-soft);
+            line-height: 1.8;
+        }
+
+        /* ===== CTA Final ===== */
+        .cta-final {
+            background: linear-gradient(135deg, #1e3a8a 0%, #5b21b6 100%);
+            color: #fff;
+            text-align: center;
+        }
+        .cta-final h2 {
+            font-size: clamp(24px, 3.5vw, 34px);
+            margin-bottom: 14px;
+            color: #fff;
+        }
+        .cta-final p {
+            font-size: 15px;
+            opacity: 0.9;
+            max-width: 580px;
+            margin: 0 auto 30px;
+        }
+        .cta-final .btn-primary {
+            background: #fff;
+            color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+        .cta-final .btn-outline {
+            background: transparent;
+            color: #fff;
+            border-color: rgba(255,255,255,0.4);
+        }
+        .cta-final .btn-outline:hover { border-color: #fff; color: #fff; }
+
+        /* ===== Footer ===== */
+        footer {
+            background: #0f172a;
+            color: rgba(255,255,255,0.6);
+            padding: 60px 24px 30px;
+            font-size: 12px;
+        }
+        .footer-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: #fff;
+            font-weight: 700;
+        }
+        .footer-about { line-height: 1.8; }
+        .footer-title {
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .footer-links li { list-style: none; margin-bottom: 8px; }
+        .footer-links a { transition: color 0.15s; }
+        .footer-links a:hover { color: #fff; }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            opacity: 0.5;
+            font-size: 11px;
+        }
+
+        @media (max-width: 720px) {
+            .nav-links { display: none; }
+            .nav-links.mobile-cta-only { display: flex; }
+            section { padding: 60px 20px; }
+            .hero { padding: 80px 20px 60px; }
+            .demo-content { grid-template-columns: 1fr; }
+            .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+            .price-card.featured { transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== Nav ===== -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="#top" class="nav-brand">
+            <span class="nav-brand-mark">M</span>
+            <span>
+                <span class="nav-brand-text">MinaTech Realty Console</span>
+                <span class="nav-brand-sub">Property Operations Platform</span>
+            </span>
+        </a>
+        <div class="nav-links">
+            <a href="#features" class="nav-link">機能</a>
+            <a href="#demo" class="nav-link">画面</a>
+            <a href="#pricing" class="nav-link">料金</a>
+            <a href="#faq" class="nav-link">FAQ</a>
+            <a href="scoring.html" class="nav-link">採点基準</a>
+            <a href="/" class="btn-primary">ツールを開く</a>
+        </div>
+        <div class="nav-links mobile-cta-only" style="display:none;">
+            <a href="/" class="btn-primary">ツールを開く</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="top">
+    <div class="hero-inner">
+        <div class="hero-badge">宅建業者専用 / 国土交通省「不動産情報ライブラリ」28空間APIフル統合済み <strong>NEW</strong></div>
+        <h1>
+            不動産仲介業務を、<br>
+            <span class="gradient">一画面でまるごと。</span>
+        </h1>
+        <p class="hero-desc">
+            物件評価・SUUMO入稿支援・画像処理・物件マスタDB・銀行担保評価書作成・<br>
+            ポータル横断検索まで。レインズや販売図面から１枚の画面で全てを完結。
+        </p>
+        <div class="hero-cta">
+            <a href="#pricing" class="btn-primary">料金を見る</a>
+            <a href="#demo" class="btn-outline">画面サンプルを見る</a>
+        </div>
+        <div class="hero-note">14日間無料トライアル / クレジットカード登録不要 / 即日利用開始</div>
+    </div>
+</section>
+
+<!-- ===== Pain Points ===== -->
+<section class="pain">
+    <div class="section-inner">
+        <div class="section-head">
+            <span class="section-label">Pain Points</span>
+            <h2 class="section-title">こんな業務の<br>「散らかり」に</h2>
+            <p class="section-desc">レインズ・スコアリング・SUUMO入稿・銀行評価書・画像加工・物件管理が別々のツールに散在し、毎案件で同じ作業を繰り返していませんか。</p>
+        </div>
+        <div class="pain-grid">
+            <div class="pain-card">
+                <div class="pain-icon">📋</div>
+                <h3>毎回コピペで疲弊</h3>
+                <p>レインズの物件情報を Excel・SUUMO 入稿・銀行評価書に何度も転記。1物件あたり1〜2時間消える。</p>
+            </div>
+            <div class="pain-card">
+                <div class="pain-icon">🤔</div>
+                <h3>勘で点数を付けている</h3>
+                <p>「これは買い」「やめとけ」の判断が属人化。新人が判断できず、ベテランの記憶頼り。</p>
+            </div>
+            <div class="pain-card">
+                <div class="pain-icon">🖼️</div>
+                <h3>画像処理で時間を溶かす</h3>
+                <p>SUUMO規格へのリサイズ・顔やナンバープレートのマスキング・4MB制限対応。1案件30分以上。</p>
+            </div>
+            <div class="pain-card">
+                <div class="pain-icon">🗂️</div>
+                <h3>追客状況が見えない</h3>
+                <p>「あの物件、検討中？問合せ済？指値中？」がメモやLINE任せ。重複問合せや失注リスク。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Features ===== -->
+<section id="features">
+    <div class="section-inner">
+        <div class="section-head">
+            <span class="section-label">Features</span>
+            <h2 class="section-title">一画面で完結する<br>7つの業務機能</h2>
+            <p class="section-desc">業務フロー順に並んだモジュール群。すべて同一データを共有するため、二重入力ゼロ。</p>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="feature-num">01</span>
+                <h3>物件評価スコアリング</h3>
+                <p>レインズコピペで10点満点の自動評価。S/A/B/Cランク判定で、検討すべき物件を一瞬で仕分け。<a href="scoring.html" style="color:var(--accent);">採点基準は完全公開中</a>。</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">投資/実需 切替</span>
+                    <span class="feature-tag">5カテゴリ対応</span>
+                </div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-num">02</span>
+                <h3>SUUMO入稿支援</h3>
+                <p>SUUMO入稿規定2025.12版に完全準拠。特徴項目180種を自動判定、コンプライアンスチェッカー、入稿シート生成まで。</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">業者情報マスタ</span>
+                    <span class="feature-tag">CSV/JSON出力</span>
+                </div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-num">03</span>
+                <h3>画像処理</h3>
+                <p>SUUMO規格3プロファイルへリサイズ、4MB圧縮、face-api.jsで顔自動マスキング、Tesseractでナンバープレート検知。</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">ブラウザ完結</span>
+                    <span class="feature-tag">外部送信なし</span>
+                </div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-num">04</span>
+                <h3>物件マスタDB</h3>
+                <p>9ステータス管理（検討中/問合せ済/内見済/指値中/契約済/失注 等）。タグ・メモ・更新履歴で追客もれを撲滅。JSONバックアップで端末移行も簡単。</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">IndexedDB永続化</span>
+                    <span class="feature-tag">CSV/JSON出力</span>
+                </div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-num">05</span>
+                <h3>ポータル横断チェッカー</h3>
+                <p>物件名や住所を入れるだけで SUUMO / atホーム / HOMES の該当ページを即特定。「掲載中か」を1クリックで横断確認。</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">3社対応</span>
+                    <span class="feature-tag">HTMLペースト解析</span>
+                </div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-num">06</span>
+                <h3>銀行担保評価書</h3>
+                <p>積算×80% / 収益還元×90% の低位採用で銀行評価書PDFを自動生成。融資相談に持っていくだけで通る書類を即出力。</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">PDF出力</span>
+                    <span class="feature-tag">2方式同時計算</span>
+                </div>
+            </div>
+            <div class="feature-card">
+                <span class="feature-num">07</span>
+                <h3>国交省API 28系統 統合</h3>
+                <p>取引価格・地価公示・ハザード11種・都市計画7種・生活環境10種・将来人口を空間APIから自動取得。机上資料が秒で揃う。</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">不動産情報ライブラリ</span>
+                    <span class="feature-tag">空間API</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Demo Mock ===== -->
+<section class="demo" id="demo">
+    <div class="section-inner">
+        <div class="section-head">
+            <span class="section-label">Screens</span>
+            <h2 class="section-title">画面サンプル</h2>
+            <p class="section-desc">物件1件あたり、レインズコピペから評価完了まで30秒。実画面のイメージです。</p>
+        </div>
+        <div class="demo-mockup">
+            <div class="demo-bar">
+                <span></span><span></span><span></span>
+                <span class="demo-bar-url">realty.minatech1210.com</span>
+            </div>
+            <div class="demo-content">
+                <div class="demo-panel">
+                    <div class="demo-panel-title">解析結果</div>
+                    <div class="demo-stat"><span>物件名</span><span class="demo-stat-val">ラシェール鎌倉岡本ハイライズ</span></div>
+                    <div class="demo-stat"><span>価格</span><span class="demo-stat-val">4,280万円</span></div>
+                    <div class="demo-stat"><span>専有面積</span><span class="demo-stat-val">123.70㎡</span></div>
+                    <div class="demo-stat"><span>築年月</span><span class="demo-stat-val">2003年3月</span></div>
+                    <div class="demo-stat"><span>表面利回り</span><span class="demo-stat-val" style="color:var(--success);">12.8%</span></div>
+                    <div class="demo-stat"><span>駅徒歩</span><span class="demo-stat-val">大船 15分</span></div>
+                </div>
+                <div class="demo-panel demo-score">
+                    <div class="demo-panel-title" style="margin-bottom:14px;">10点満点スコア</div>
+                    <div class="demo-score-num">8.0</div>
+                    <div class="demo-score-rank">S 即日対応</div>
+                    <div class="demo-score-label">エリア+3 / 利回り+2 / 駅距離+1 / 構造+1 / OC+1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Pricing ===== -->
+<section class="pricing" id="pricing">
+    <div class="section-inner">
+        <div class="section-head">
+            <span class="section-label">Pricing</span>
+            <h2 class="section-title">プラン</h2>
+            <p class="section-desc">14日間無料トライアル。クレジット登録不要。料金詳細はお問い合わせください。</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <div class="price-name">Trial</div>
+                <div class="price-tagline">まずは試してみたい方</div>
+                <div class="price-amount">0円<span class="small"> / 14日</span></div>
+                <div class="price-period">クレジットカード登録不要</div>
+                <ul class="price-features">
+                    <li>1名利用可能</li>
+                    <li>全評価機能利用可能</li>
+                    <li>CSV出力</li>
+                    <li class="disabled">Excel/JSON出力</li>
+                    <li class="disabled">カスタムスコアリング</li>
+                </ul>
+                <a href="mailto:isoya.h@minatech1210.com?subject=Realty%20Console%20トライアル申込み" class="price-cta">トライアルを申し込む</a>
+            </div>
+            <div class="price-card featured">
+                <span class="price-featured-label">おすすめ</span>
+                <div class="price-name">Standard</div>
+                <div class="price-tagline">少人数の宅建業者向け</div>
+                <div class="price-amount">ASK<span class="small"> / 年</span></div>
+                <div class="price-period">3名まで利用可</div>
+                <ul class="price-features">
+                    <li>3名利用可能</li>
+                    <li>全評価機能</li>
+                    <li>CSV / Excel / JSON 出力</li>
+                    <li>SUUMO入稿支援</li>
+                    <li>画像処理（顔/ナンバー自動マスキング）</li>
+                    <li>物件マスタDB / 銀行担保評価書</li>
+                    <li>ポータル横断チェッカー</li>
+                    <li class="disabled">カスタムスコアリング</li>
+                </ul>
+                <a href="mailto:isoya.h@minatech1210.com?subject=Realty%20Console%20スタンダード料金問合せ" class="price-cta">料金を問い合わせる</a>
+            </div>
+            <div class="price-card">
+                <div class="price-name">Professional</div>
+                <div class="price-tagline">中堅以上の宅建業者向け</div>
+                <div class="price-amount">ASK<span class="small"> / 年</span></div>
+                <div class="price-period">10名まで利用可</div>
+                <ul class="price-features">
+                    <li>10名利用可能</li>
+                    <li>Standardの全機能</li>
+                    <li>カスタムスコアリング</li>
+                    <li>優先サポート</li>
+                    <li>機能要望の優先実装</li>
+                </ul>
+                <a href="mailto:isoya.h@minatech1210.com?subject=Realty%20Console%20プロフェッショナル料金問合せ" class="price-cta">料金を問い合わせる</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Trust / Compliance ===== -->
+<section>
+    <div class="section-inner">
+        <div class="section-head">
+            <span class="section-label">Trust</span>
+            <h2 class="section-title">業務利用にふさわしい設計</h2>
+            <p class="section-desc">業務システムとして必要な信頼性・コンプライアンスを担保しています。</p>
+        </div>
+        <div class="trust-grid">
+            <div class="trust-item">
+                <div class="trust-icon">🔒</div>
+                <h4>外部送信なし</h4>
+                <p>物件情報・画像はすべてブラウザ内で処理。スコアリングロジックもクライアント側で完結。</p>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">📐</div>
+                <h4>採点基準公開</h4>
+                <p>10点満点の重み付け・判定基準を <a href="scoring.html" style="color:var(--accent);">公開ページ</a> で完全開示。</p>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">📋</div>
+                <h4>スクレイピング不実施</h4>
+                <p>レインズ・SUUMO・HOMES等への自動アクセスは一切なし。利用規約遵守。</p>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">💾</div>
+                <h4>データ可搬性</h4>
+                <p>JSONバックアップ/インポートで端末移行・引継ぎが容易。データはお客様のものです。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section style="background:var(--bg-soft);" id="faq">
+    <div class="section-inner">
+        <div class="section-head">
+            <span class="section-label">FAQ</span>
+            <h2 class="section-title">よくあるご質問</h2>
+        </div>
+        <div class="faq-list">
+            <details class="faq-item">
+                <summary class="faq-q">トライアル後に自動課金されますか？</summary>
+                <p class="faq-a">いいえ。クレジットカード登録は不要で、トライアル後は自動的に機能制限モードへ移行します。ご利用継続をご希望の場合のみ、お問い合わせいただければ請求書払いまたは銀行振込でのご契約となります。</p>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-q">物件データはどこに保存されますか？</summary>
+                <p class="faq-a">お使いのブラウザ内（IndexedDB）に保存されます。クラウド送信は行いません。端末移行や複数端末利用のためにJSONバックアップ/復元機能を提供しています。</p>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-q">スコアリングロジックは信頼できますか？</summary>
+                <p class="faq-a">10点満点の採点基準・重み配分・判定基準を <a href="scoring.html" style="color:var(--accent);">採点基準ページ</a> で全面公開しています。「ブラックボックスのAI」ではなく、根拠を明示したルールベースのエンジンです。</p>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-q">SUUMO・atホーム・HOMESの物件情報を自動取得できますか？</summary>
+                <p class="faq-a">いいえ。各社の利用規約により自動取得（スクレイピング）は禁止されているため、本ツールは「人間が業務上で表示・コピーしたHTMLのみ解析」の方針です。住所・物件名から各社の検索URLへワンクリックジャンプし、人間が確認した結果を構造化します。</p>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-q">画像処理で顔やナンバープレートのマスキングは確実ですか？</summary>
+                <p class="faq-a">face-api.js（顔検出）と Tesseract.js（OCR）でブラウザ内自動マスキングを行いますが、100%の検出は保証されません。掲載前の最終確認は人間の目視チェックをお願いしています。</p>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-q">サーバーが落ちたらツールも使えなくなりますか？</summary>
+                <p class="faq-a">本ツールはサーバーレス（純粋なフロントエンドアプリ）のため、GitHub Pages または Cloudflare CDN のいずれかが生きていれば動作します。ライセンス検証もブラウザ内で完結します。</p>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-q">本ツールでの評価結果は投資助言ですか？</summary>
+                <p class="faq-a">いいえ。本ツールは業務効率化を目的としており、提供する評価結果は参考情報です。金融商品取引法上の投資助言業者ではありません。最終的な投資判断はご利用者ご自身の責任において行ってください。</p>
+            </details>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CTA Final ===== -->
+<section class="cta-final">
+    <div class="section-inner">
+        <h2>30秒で、業務がひとつになる。</h2>
+        <p>14日間の無料トライアル中に全機能をお試しいただけます。クレジットカード登録は不要。即日でご利用開始できます。</p>
+        <div class="hero-cta" style="margin-bottom:0;">
+            <a href="mailto:isoya.h@minatech1210.com?subject=Realty%20Console%20トライアル申込み" class="btn-primary">トライアルを申し込む</a>
+            <a href="/" class="btn-outline">既にライセンスあり / ツールを開く</a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+    <div class="footer-inner">
+        <div>
+            <div class="footer-brand">
+                <span class="nav-brand-mark">M</span>
+                <span>MinaTech Realty Console</span>
+            </div>
+            <p class="footer-about">
+                宅建業者向け 不動産仲介業務統合プラットフォーム。<br>
+                Property Operations Platform by MinaTech.
+            </p>
+            <p style="margin-top:14px;line-height:1.8;">
+                MinaTech株式会社<br>
+                〒251-0055 神奈川県藤沢市南藤沢3-12 クリオ藤沢駅前 7階<br>
+                宅地建物取引業：神奈川県知事（1）第32624号<br>
+                TEL: 0467-28-7603
+            </p>
+        </div>
+        <div>
+            <div class="footer-title">Product</div>
+            <ul class="footer-links">
+                <li><a href="#features">機能</a></li>
+                <li><a href="#demo">画面サンプル</a></li>
+                <li><a href="#pricing">料金</a></li>
+                <li><a href="scoring.html">採点基準</a></li>
+                <li><a href="terms.html">利用規約</a></li>
+            </ul>
+        </div>
+        <div>
+            <div class="footer-title">Contact</div>
+            <ul class="footer-links">
+                <li><a href="mailto:isoya.h@minatech1210.com">isoya.h@minatech1210.com</a></li>
+                <li><a href="tel:0467287603">0467-28-7603</a></li>
+                <li><a href="https://realestate.minatech1210.com/" target="_blank" rel="noopener">運営会社（Shonan Minato REAL ESTATE）</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        © <span id="year"></span> MinaTech株式会社 — All Rights Reserved.
+    </div>
+</footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
