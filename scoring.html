@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スコアリング基準 | MinaTech Realty Console</title>
+    <meta name="description" content="MinaTech Realty Console の物件評価スコアリング（10点満点）の採点基準・重み付け・判定基準を公開しています。">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
+    <style>
+        body { font-family: 'Inter','Noto Sans JP','Hiragino Sans','Yu Gothic',system-ui,sans-serif; background: #f7f8fb; color: #1f2937; line-height: 1.7; }
+        .wrap { max-width: 880px; margin: 0 auto; padding: 40px 24px 80px; }
+        h1 { font-size: 28px; margin-bottom: 8px; }
+        .lead { color: #6b7280; margin-bottom: 32px; font-size: 14px; }
+        h2 { font-size: 18px; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 2px solid #e3e8ef; }
+        h3 { font-size: 15px; margin: 20px 0 8px; color: #1e40af; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+        th { background: #fafbfc; font-weight: 600; color: #555; }
+        tr:last-child td { border-bottom: none; }
+        .pos { color: #10b981; font-weight: 600; }
+        .neg { color: #dc2626; font-weight: 600; }
+        .rank-card { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+        .rank-card > div { background: #fff; padding: 14px; border-radius: 6px; text-align: center; border-left: 4px solid; }
+        .rank-S { border-color: #dc2626; } .rank-A { border-color: #f59e0b; }
+        .rank-B { border-color: #3b82f6; } .rank-C { border-color: #6b7280; }
+        .note { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 12px 16px; border-radius: 6px; font-size: 12px; color: #92400e; margin: 16px 0; }
+        .back { display: inline-block; margin-top: 24px; padding: 8px 16px; background: #3b82f6; color: #fff; border-radius: 4px; text-decoration: none; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <h1>スコアリング基準</h1>
+        <p class="lead">MinaTech Realty Console の物件評価ロジック（10点満点制）の採点基準を公開します。本ツールはクライアントサイドJavaScript（<code>scorer.js</code>）で算出しており、外部送信は行いません。</p>
+
+        <h2>採点配点（合計10点満点）</h2>
+        <table>
+            <thead><tr><th>項目</th><th style="width:25%;">配点</th><th>基準</th></tr></thead>
+            <tbody>
+                <tr><td>エリア市場性</td><td><span class="pos">0〜+3点</span></td><td>東京23区/政令市=3点、都下/TIER1主要県=2点、TIER2地方中核=1点、TIER3郊外=0点、過疎市町村=減点</td></tr>
+                <tr><td>表面利回り</td><td><span class="pos">0〜+2点</span></td><td>表面15%以上=2点、10%以上=1点、未満=0点</td></tr>
+                <tr><td>駅距離</td><td><span class="pos">0〜+1点</span></td><td>徒歩10分以内=1点</td></tr>
+                <tr><td>価格帯</td><td><span class="pos">0〜+1点</span></td><td>500万円以下=1点（低リスク・小ロット重視）</td></tr>
+                <tr><td>賃貸中(OC)</td><td><span class="pos">0〜+1点</span></td><td>入居中物件=1点（即収益化）</td></tr>
+                <tr><td>構造・築年</td><td><span class="pos">0〜+1点</span></td><td>RC造または築浅=1点</td></tr>
+                <tr><td>再建築不可</td><td><span class="neg">-3点</span></td><td>該当時に控除（出口戦略の困難さ）</td></tr>
+                <tr><td>実質利回り</td><td><span class="neg">0 / -2点</span></td><td>管理費・修繕費等を控除した実質利回りが5%未満=-2点</td></tr>
+            </tbody>
+        </table>
+
+        <h2>判定ランクと推奨アクション</h2>
+        <div class="rank-card">
+            <div class="rank-S">
+                <div style="font-size:22px;font-weight:700;color:#dc2626;">S</div>
+                <div style="font-size:11px;color:#666;">7点以上</div>
+                <div style="font-size:12px;margin-top:4px;">即日対応推奨</div>
+            </div>
+            <div class="rank-A">
+                <div style="font-size:22px;font-weight:700;color:#f59e0b;">A</div>
+                <div style="font-size:11px;color:#666;">5〜6点</div>
+                <div style="font-size:12px;margin-top:4px;">今週中対応</div>
+            </div>
+            <div class="rank-B">
+                <div style="font-size:22px;font-weight:700;color:#3b82f6;">B</div>
+                <div style="font-size:11px;color:#666;">3〜4点</div>
+                <div style="font-size:12px;margin-top:4px;">今月中検討</div>
+            </div>
+            <div class="rank-C">
+                <div style="font-size:22px;font-weight:700;color:#6b7280;">C</div>
+                <div style="font-size:11px;color:#666;">2点以下</div>
+                <div style="font-size:12px;margin-top:4px;">見送り</div>
+            </div>
+        </div>
+
+        <h2>エリアティア定義（一部抜粋）</h2>
+        <h3>東京23区（最高ティア）</h3>
+        <p style="font-size:13px;">千代田・中央・港・新宿・文京・台東・墨田・江東・品川・目黒・大田・世田谷・渋谷・中野・杉並・豊島・北・荒川・板橋・練馬・足立・葛飾・江戸川 の各区</p>
+        <h3>TIER1（主力都市圏）</h3>
+        <p style="font-size:13px;">埼玉・千葉・神奈川・大阪・愛知・福岡</p>
+        <h3>TIER2（準主力）</h3>
+        <p style="font-size:13px;">茨城・栃木・群馬・静岡・兵庫・京都・広島・宮城・北海道</p>
+        <h3>TIER3（郊外・地方）</h3>
+        <p style="font-size:13px;">新潟・長野・岡山・熊本・鹿児島・和歌山・三重・滋賀</p>
+        <h3>低需要エリア（減点対象）</h3>
+        <p style="font-size:13px;">宮古市・釜石市・大船渡市・夕張市・歌志内・三笠市・五島・対馬・壱岐 等</p>
+
+        <h2>重み付けの根拠</h2>
+        <p style="font-size:13px;">本基準は、CLAUDE.md記載の経営方針「買いリスクを極限まで低く抑え、リフォーム後に利益が出る物件を検索」に基づいて設計されています。</p>
+        <ul style="font-size:13px;padding-left:20px;">
+            <li><strong>エリア市場性に3点を配分</strong> → 出口戦略（再販・賃貸付け）の確実性が物件選定の最重要因子であるため</li>
+            <li><strong>表面利回りに2点</strong> → 投資判断の一次フィルター（粗利の目安）</li>
+            <li><strong>価格帯500万円以下に加点</strong> → 借入リスクを抑え、現金購入や少額融資で動ける物件を優遇</li>
+            <li><strong>再建築不可を-3点</strong> → 出口戦略が極めて困難になるため、利回りが高くても回避すべき</li>
+            <li><strong>実質利回り5%未満を-2点</strong> → 表面利回りで釣られた物件の罠を防止</li>
+        </ul>
+
+        <h2>バックテストについて</h2>
+        <p style="font-size:13px;">2026年5月現在、過去成約データとの照合（バックテスト）は実施しておりません。スコアと実際の収益性の相関は経験則ベースの設計です。今後、自社取扱物件の実績データ蓄積に伴い、重み係数の見直しと定期的な検証を予定しています。</p>
+
+        <div class="note">
+            <strong>免責</strong>：本スコアは投資判断の参考情報であり、収益性・取引可否を保証するものではありません。最終的な投資判断は利用者ご自身の責任において行ってください。当社は金融商品取引法上の投資助言業者ではありません。
+        </div>
+
+        <a href="/" class="back">← ツールへ戻る</a>
+    </div>
+</body>
+</html>

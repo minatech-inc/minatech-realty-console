@@ -343,6 +343,13 @@
         if (btnImageProc) btnImageProc.addEventListener('click', function() {
             if (typeof ImageProcessorUI !== 'undefined') ImageProcessorUI.open();
         });
+
+        // ポータル横断チェッカー
+        var btnPortalChecker = document.getElementById('btn-portal-checker-header');
+        if (btnPortalChecker) btnPortalChecker.addEventListener('click', function() {
+            if (typeof PortalCheckerUI !== 'undefined') PortalCheckerUI.open();
+            else alert('ポータルチェッカーモジュールが読み込まれていません。');
+        });
         var btnSuumoExport = document.getElementById('btn-suumo-export');
         if (btnSuumoExport) btnSuumoExport.addEventListener('click', function() {
             if (!analyzedProperties || analyzedProperties.length === 0) {

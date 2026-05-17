@@ -5,9 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MinaTech Realty Console | 不動産仲介業務統合プラットフォーム</title>
     <meta name="description" content="不動産仲介業務をワンストップで支える統合コンソール。物件評価・SUUMO入稿・画像処理・取引先管理を一画面で。">
+    <link rel="canonical" href="https://realty.minatech1210.com/">
+    <meta property="og:title" content="MinaTech Realty Console | 不動産仲介業務統合プラットフォーム">
+    <meta property="og:description" content="物件評価・SUUMO入稿・画像処理・取引先管理を一画面で。宅建業者専用の業務統合ツール。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://realty.minatech1210.com/">
+    <meta property="og:image" content="https://realty.minatech1210.com/logo.svg">
+    <meta property="og:site_name" content="MinaTech Realty Console">
+    <meta property="og:locale" content="ja_JP">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="theme.css?v=20260424e">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "MinaTech Realty Console",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "url": "https://realty.minatech1210.com/",
+      "description": "不動産仲介業者向け業務統合プラットフォーム。物件評価・SUUMO入稿支援・画像処理・物件マスタ管理・銀行担保評価書作成を提供。",
+      "publisher": {
+        "@type": "Organization",
+        "name": "MinaTech株式会社",
+        "url": "https://realestate.minatech1210.com/"
+      },
+      "offers": {
+        "@type": "Offer",
+        "category": "SaaS",
+        "businessFunction": "https://purl.org/goodrelations/v1#LeaseOut"
+      }
+    }
+    </script>
     <script>
       // テーマ初期化（FOUC防止のため<head>で実行）
       (function() {
@@ -51,6 +80,7 @@
                 </span>
             </div>
             <div class="header-right">
+                <button id="btn-portal-checker-header" class="btn btn-outline btn-sm" title="SUUMO / atホーム / HOMES の横断検索と物件HTMLの構造化解析" style="margin-right:8px;">ポータル横断</button>
                 <button id="btn-property-master-header" class="btn btn-outline btn-sm" title="物件マスタDB（永続保存）" style="margin-right:8px;">物件マスタ</button>
                 <button id="btn-image-processor-header" class="btn btn-outline btn-sm" title="画像のSUUMO規格リサイズ・自動マスキング" style="margin-right:8px;">画像処理</button>
                 <button id="btn-suumo-broker-header" class="btn btn-outline btn-sm" title="SUUMO入稿用の業者情報マスタを設定" style="margin-right:10px;">業者情報設定</button>
@@ -59,6 +89,7 @@
                     <button id="theme-dark"  type="button" title="ダークモード" aria-label="ダークモード">☾</button>
                 </div>
                 <div id="license-status" class="license-status"></div>
+                <a href="scoring.html" target="_blank" rel="noopener" style="font-size:11px;color:#3b82f6;margin-right:10px;text-decoration:none;" title="スコアリング基準（10点満点）の公開ページ">採点基準</a>
                 <div class="header-badge">宅建業者専用</div>
             </div>
         </div>
@@ -479,7 +510,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}</script>
-    <script src="license.js?v=20260424e"></script>
+    <script src="license.js?v=20260517e"></script>
     <script src="parser.js?v=20260424e"></script>
     <script src="category.js?v=20260424e"></script>
     <script src="market.js?v=20260424e"></script>
@@ -500,11 +531,13 @@
     <script src="suumoFeatures.js?v=20260424e"></script>
     <script src="suumoExporter.js?v=20260424e"></script>
     <script src="suumoUI.js?v=20260424e"></script>
-    <script src="propertyMaster.js?v=20260424e"></script>
-    <script src="propertyMasterUI.js?v=20260424e"></script>
+    <script src="propertyMaster.js?v=20260517e"></script>
+    <script src="propertyMasterUI.js?v=20260517e"></script>
     <script src="imageProcessor.js?v=20260424e"></script>
     <script src="imageProcessorUI.js?v=20260424e"></script>
-    <script src="app.js?v=20260424e"></script>
+    <script src="portalChecker.js?v=20260517d"></script>
+    <script src="portalCheckerUI.js?v=20260517d"></script>
+    <script src="app.js?v=20260517b"></script>
     <script src="pdf-analyzer.js?v=20260424e"></script>
 </body>
 </html>

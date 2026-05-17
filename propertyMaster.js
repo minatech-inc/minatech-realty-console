@@ -203,6 +203,97 @@ var PropertyMaster = (function() {
         return /[,"\n]/.test(s) ? '"' + s + '"' : s;
     }
 
+    // ======== 端末移行・バックアップ用 JSONエクスポート/インポート ========
+
+    function exportAllJSON() {
+        return listProperties().then(function(items) {
+            return JSON.stringify({
+                schema: 'minatech-realty-console.property-master',
+                version: 1,
+                exportedAt: new Date().toISOString(),
+                count: items.length,
+                items: items
+            }, null, 2);
+        });
+    }
+
+    /**
+     * JSONインポート。
+     * mode: 'merge' = 物件名+所在地で重複検出して更新／追加（既定）
+     *       'replace' = 既存マスタを全削除して入れ替える
+     * @returns Promise<{ added, updated, skipped, total }>
+     */
+    function importJSON(jsonText, opts) {
+        opts = opts || {};
+        var mode = opts.mode || 'merge';
+        var parsed;
+        try {
+            parsed = JSON.parse(jsonText);
+        } catch (e) {
+            return Promise.reject(new Error('JSONの解析に失敗しました: ' + e.message));
+        }
+        if (!parsed || !Array.isArray(parsed.items)) {
+            return Promise.reject(new Error('不正なフォーマットです（items 配列がありません）'));
+        }
+        if (parsed.schema && parsed.schema !== 'minatech-realty-console.property-master') {
+            return Promise.reject(new Error('別ツールのエクスポートデータのため取り込めません: ' + parsed.schema));
+        }
+
+        return open().then(function(db) {
+            return new Promise(function(resolve, reject) {
+                var tx = db.transaction(STORE_MASTER, 'readwrite');
+                var store = tx.objectStore(STORE_MASTER);
+                var stat = { added: 0, updated: 0, skipped: 0, total: parsed.items.length };
+
+                function processItems() {
+                    var existing = {};
+                    var listReq = store.getAll();
+                    listReq.onsuccess = function() {
+                        listReq.result.forEach(function(r) {
+                            var k = (r.propertyName || '') + '|' + (r.address || '');
+                            existing[k] = r;
+                        });
+                        var i = 0;
+                        function next() {
+                            if (i >= parsed.items.length) return resolve(stat);
+                            var item = parsed.items[i++];
+                            if (!item || (!item.propertyName && !item.address)) {
+                                stat.skipped++;
+                                return next();
+                            }
+                            var key = (item.propertyName || '') + '|' + (item.address || '');
+                            var existingRec = existing[key];
+                            var rec = Object.assign({}, item);
+                            rec.updatedAt = new Date().toISOString();
+                            if (existingRec) {
+                                rec.id = existingRec.id;
+                                rec.createdAt = existingRec.createdAt;
+                                store.put(rec);
+                                stat.updated++;
+                            } else {
+                                delete rec.id;
+                                if (!rec.createdAt) rec.createdAt = rec.updatedAt;
+                                store.add(rec);
+                                stat.added++;
+                            }
+                            next();
+                        }
+                        next();
+                    };
+                    listReq.onerror = function(e) { reject(e.target.error); };
+                }
+
+                if (mode === 'replace') {
+                    var clearReq = store.clear();
+                    clearReq.onsuccess = processItems;
+                    clearReq.onerror = function(e) { reject(e.target.error); };
+                } else {
+                    processItems();
+                }
+            });
+        });
+    }
+
     function getStatusOptions() { return STATUSES.slice(); }
     function findStatus(code) {
         return STATUSES.find(function(s) { return s.code === code; });
@@ -215,6 +306,8 @@ var PropertyMaster = (function() {
         updateProperty:  updateProperty,
         deleteProperty:  deleteProperty,
         exportAllCSV:    exportAllCSV,
+        exportAllJSON:   exportAllJSON,
+        importJSON:      importJSON,
         getStatusOptions:getStatusOptions,
         findStatus:      findStatus
     };

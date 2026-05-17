@@ -26,7 +26,10 @@ var PropertyMasterUI = (function() {
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">';
         html += '<h2 style="margin:0;">物件マスタ</h2>';
         html += '<div>';
-        html += '<button id="pm-export-csv" class="btn btn-outline">CSV出力</button> ';
+        html += '<button id="pm-export-csv" class="btn btn-outline" title="表形式でエクスポート">CSV出力</button> ';
+        html += '<button id="pm-export-json" class="btn btn-outline" title="バックアップ・端末移行用">JSONバックアップ</button> ';
+        html += '<button id="pm-import-json" class="btn btn-outline" title="別端末から復元">JSON復元</button> ';
+        html += '<input type="file" id="pm-import-file" accept=".json,application/json" style="display:none;">';
         html += '<button id="pm-close" class="btn btn-outline">閉じる</button>';
         html += '</div></div>';
         // フィルタ
@@ -60,6 +63,57 @@ var PropertyMasterUI = (function() {
             PropertyMaster.exportAllCSV().then(function(csv) {
                 downloadFile('property-master-' + new Date().toISOString().slice(0,10) + '.csv', csv, 'text/csv;charset=utf-8');
             });
+        };
+        document.getElementById('pm-export-json').onclick = function() {
+            PropertyMaster.exportAllJSON().then(function(json) {
+                downloadFile('property-master-backup-' + new Date().toISOString().slice(0,10) + '.json', json, 'application/json;charset=utf-8');
+                if (typeof showToast === 'function') showToast('JSONバックアップを保存しました。別端末で復元する場合はこのファイルを「JSON復元」から読み込んでください', 'success');
+            });
+        };
+        document.getElementById('pm-import-json').onclick = function() {
+            document.getElementById('pm-import-file').click();
+        };
+        document.getElementById('pm-import-file').onchange = function(e) {
+            var file = e.target.files && e.target.files[0];
+            if (!file) return;
+            var mode = confirm(
+                'JSONを復元します。\n\n' +
+                '「OK」 = 既存マスタにマージ（物件名+所在地で重複検出して更新／追加）\n' +
+                '「キャンセル」 = 完全に置き換える（既存マスタ全削除）を選択する場合は次のダイアログで「OK」'
+            );
+            var importMode = 'merge';
+            if (!mode) {
+                if (!confirm('完全に置き換えますか？\n\n既存マスタを全て削除してから取り込みます。\n（この操作は取り消せません）')) {
+                    document.getElementById('pm-import-file').value = '';
+                    return;
+                }
+                importMode = 'replace';
+            }
+            var reader = new FileReader();
+            reader.onload = function() {
+                PropertyMaster.importJSON(reader.result, { mode: importMode })
+                    .then(function(stat) {
+                        var msg = '取込完了：追加 ' + stat.added + '件 / 更新 ' + stat.updated + '件 / スキップ ' + stat.skipped + '件（合計 ' + stat.total + '件）';
+                        if (typeof showToast === 'function') showToast(msg, 'success');
+                        else alert(msg);
+                        triggerReload(
+                            document.getElementById('pm-search').value,
+                            document.getElementById('pm-status-filter').value
+                        );
+                    })
+                    .catch(function(err) {
+                        var msg = '復元失敗: ' + err.message;
+                        if (typeof showToast === 'function') showToast(msg, 'error');
+                        else alert(msg);
+                    })
+                    .then(function() {
+                        document.getElementById('pm-import-file').value = '';
+                    });
+            };
+            reader.onerror = function() {
+                alert('ファイル読み込みに失敗しました');
+            };
+            reader.readAsText(file);
         };
     }
 
