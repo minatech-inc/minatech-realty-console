@@ -12,3 +12,8 @@ Thumbs.db
 # Backup
 *.bak
 *.swp
+
+# 重説テンプレ等の業界書式PDF（協会著作権・宅建業者情報を含むため公開しない）
+templates/*
+!templates/README.md
+*.pdf
