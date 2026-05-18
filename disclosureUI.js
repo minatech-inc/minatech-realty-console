@@ -12,6 +12,7 @@ var DisclosureUI = (function() {
 
     var currentProp = null;
     var currentOpts = {
+        formatKey: null,
         broker: {},
         itDisclosure: { enabled: false },
         contract: {},
@@ -39,6 +40,10 @@ var DisclosureUI = (function() {
     function open(prop) {
         currentProp = prop || null;
         currentOpts.broker = Object.assign({}, loadBrokerFromStorage());
+        if (!currentOpts.formatKey && currentProp) {
+            currentOpts.formatKey = Disclosure.inferFormatKey(currentProp);
+        }
+        if (!currentOpts.formatKey) currentOpts.formatKey = 'sale_condo';
         renderModal();
     }
 
@@ -63,6 +68,29 @@ var DisclosureUI = (function() {
         // 免責
         html += '<div style="background:#fef2f2;border-left:3px solid #dc2626;padding:10px 14px;border-radius:6px;font-size:11.5px;color:#7f1d1d;margin-bottom:14px;line-height:1.7;">';
         html += '<b>重要：</b>本機能は重説の<u>下書き作成支援</u>に限定されます。実際の重説は宅地建物取引士の対面/IT重説による説明・記名押印が必要であり、本書面の自動生成は宅建業法上の説明責任を免除しません。記載内容の最終確認は宅建士本人の責任で行ってください。';
+        html += '</div>';
+
+        // Step 0: 書式選択
+        html += '<div style="background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:14px;margin-bottom:12px;">';
+        html += '<div style="font-weight:600;margin-bottom:8px;">Step 0: 書式の選択</div>';
+        html += '<select id="dsc-format" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:13px;">';
+        var formats = Disclosure.getFormats();
+        var formatGroups = [
+            { label: '売買・交換（個人売主）', keys: ['sale_land', 'sale_landhouse', 'sale_condo'] },
+            { label: '売買・交換（宅建業者売主）', keys: ['sale_land_biz', 'sale_landhouse_biz', 'sale_condo_biz'] },
+            { label: '賃借', keys: ['rent_residential', 'rent_commercial', 'rent_landhouse'] }
+        ];
+        formatGroups.forEach(function(g) {
+            html += '<optgroup label="' + esc(g.label) + '">';
+            g.keys.forEach(function(k) {
+                if (formats[k]) {
+                    html += '<option value="' + k + '"' + (currentOpts.formatKey === k ? ' selected' : '') + '>' + esc(formats[k].label) + '</option>';
+                }
+            });
+            html += '</optgroup>';
+        });
+        html += '</select>';
+        html += '<div style="font-size:11px;color:#666;margin-top:6px;">物件の種別・売主区分・取引形態に応じた書式を選択してください。書式により記載項目が変わります。</div>';
         html += '</div>';
 
         // Step 1: 物件選択
@@ -165,6 +193,8 @@ var DisclosureUI = (function() {
         document.body.appendChild(div.firstChild);
 
         document.getElementById('dsc-close').onclick = close;
+        var fmtSelect = document.getElementById('dsc-format');
+        if (fmtSelect) fmtSelect.onchange = function() { currentOpts.formatKey = this.value; };
         document.getElementById('dsc-pick-property').onclick = pickPropertyFromMaster;
         document.getElementById('dsc-it-enabled').onchange = function() {
             document.getElementById('dsc-it-fields').style.display = this.checked ? 'block' : 'none';
@@ -198,6 +228,8 @@ var DisclosureUI = (function() {
     function collectInputs() {
         // 既に入力されている値を currentOpts に保存（再レンダリング時の損失防止）
         var $v = function(id) { var el = document.getElementById(id); return el ? el.value : ''; };
+        var fmtSel = document.getElementById('dsc-format');
+        if (fmtSel) currentOpts.formatKey = fmtSel.value;
         currentOpts.broker = {
             name: $v('dsc-broker-name'),
             license: $v('dsc-broker-license'),
