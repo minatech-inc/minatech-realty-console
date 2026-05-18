@@ -350,6 +350,18 @@
             if (typeof PortalCheckerUI !== 'undefined') PortalCheckerUI.open();
             else alert('ポータルチェッカーモジュールが読み込まれていません。');
         });
+
+        // 重説下書きジェネレータ
+        var btnDisclosure = document.getElementById('btn-disclosure-header');
+        if (btnDisclosure) btnDisclosure.addEventListener('click', function() {
+            if (typeof DisclosureUI === 'undefined') {
+                alert('重説モジュールが読み込まれていません。');
+                return;
+            }
+            // 解析中の物件があれば渡す、なければ未選択でモーダルを開く
+            var prop = (analyzedProperties && analyzedProperties.length > 0) ? analyzedProperties[0] : null;
+            DisclosureUI.open(prop);
+        });
         var btnSuumoExport = document.getElementById('btn-suumo-export');
         if (btnSuumoExport) btnSuumoExport.addEventListener('click', function() {
             if (!analyzedProperties || analyzedProperties.length === 0) {
