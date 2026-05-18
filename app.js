@@ -358,9 +358,30 @@
                 alert('重説モジュールが読み込まれていません。');
                 return;
             }
-            // 解析中の物件があれば渡す、なければ未選択でモーダルを開く
             var prop = (analyzedProperties && analyzedProperties.length > 0) ? analyzedProperties[0] : null;
             DisclosureUI.open(prop);
+        });
+
+        // 売買契約書ジェネレータ
+        var btnContract = document.getElementById('btn-contract-header');
+        if (btnContract) btnContract.addEventListener('click', function() {
+            if (typeof ContractUI === 'undefined') {
+                alert('契約書モジュールが読み込まれていません。');
+                return;
+            }
+            var prop = (analyzedProperties && analyzedProperties.length > 0) ? analyzedProperties[0] : null;
+            ContractUI.open(prop);
+        });
+
+        // 役所調査チェックリスト
+        var btnGovCheck = document.getElementById('btn-govcheck-header');
+        if (btnGovCheck) btnGovCheck.addEventListener('click', function() {
+            if (typeof GovCheckUI === 'undefined') {
+                alert('役所調査モジュールが読み込まれていません。');
+                return;
+            }
+            var prop = (analyzedProperties && analyzedProperties.length > 0) ? analyzedProperties[0] : null;
+            GovCheckUI.open(prop);
         });
         var btnSuumoExport = document.getElementById('btn-suumo-export');
         if (btnSuumoExport) btnSuumoExport.addEventListener('click', function() {

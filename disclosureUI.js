@@ -171,8 +171,50 @@ var DisclosureUI = (function() {
         html += '<option value="録画なし">録画なし</option>';
         html += '</select>';
         html += '</div>';
-        html += '<div style="font-size:11px;color:#1e40af;margin-top:8px;line-height:1.7;">';
-        html += '国土交通省「ITを活用した重要事項説明に係るマニュアル」遵守事項：通信状態確認、本人確認、書面到達確認の実施を生成PDFに明示します。';
+        html += '<div style="margin-top:8px;">';
+        html += '<label style="display:block;font-size:11px;color:#555;">録画ファイル保管URL（Google Drive等）</label>';
+        html += '<input type="url" id="dsc-it-recording-url" placeholder="https://drive.google.com/... 録画を保管した場合のURL" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:4px;font-size:12px;">';
+        html += '</div>';
+
+        // Phase 2 MVP: 電子署名
+        html += '<div style="margin-top:14px;padding-top:10px;border-top:1px dashed #93c5fd;">';
+        html += '<div style="font-size:11px;font-weight:600;color:#1e40af;margin-bottom:6px;">電子署名（Phase 2 MVP）</div>';
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">';
+        html += '<div>';
+        html += '<label style="display:block;font-size:11px;color:#555;">電子署名サービス</label>';
+        html += '<select id="dsc-it-esign-service" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:4px;font-size:12px;">';
+        html += '<option value="">未利用</option>';
+        html += '<option value="クラウドサイン">クラウドサイン</option>';
+        html += '<option value="DocuSign">DocuSign</option>';
+        html += '<option value="GMOサイン">GMOサイン</option>';
+        html += '<option value="その他">その他</option>';
+        html += '</select>';
+        html += '</div>';
+        html += '<div>';
+        html += '<label style="display:block;font-size:11px;color:#555;">参加者</label>';
+        html += '<input type="text" id="dsc-it-attendees" placeholder="取引士:○○ / 買主:○○ / 売主:○○" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:4px;font-size:12px;">';
+        html += '</div>';
+        html += '</div>';
+        html += '<div style="margin-top:8px;">';
+        html += '<label style="display:block;font-size:11px;color:#555;">電子署名URL</label>';
+        html += '<input type="url" id="dsc-it-esign-url" placeholder="https://... 電子署名ページのURL" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:4px;font-size:12px;">';
+        html += '</div>';
+        html += '</div>';
+
+        // 実施チェックリスト
+        html += '<div style="margin-top:14px;padding-top:10px;border-top:1px dashed #93c5fd;">';
+        html += '<div style="font-size:11px;font-weight:600;color:#1e40af;margin-bottom:6px;">IT重説 実施チェックリスト</div>';
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px;">';
+        var ck = currentOpts.itDisclosure.checks || {};
+        ['connection|通信状態確認','docDelivery|書面到達確認','identity|本人確認','recordingConsent|録画同意','explained|説明完了確認','qa|質疑応答'].forEach(function(pair) {
+            var k = pair.split('|')[0], lbl = pair.split('|')[1];
+            html += '<label style="cursor:pointer;"><input type="checkbox" id="dsc-it-check-' + k + '"' + (ck[k] ? ' checked' : '') + '> ' + lbl + '</label>';
+        });
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div style="font-size:11px;color:#1e40af;margin-top:10px;line-height:1.7;">';
+        html += '国交省「ITを活用した重要事項説明に係るマニュアル」遵守。電子署名は宅建業法施行規則改正（2022年5月）により取引士の電子的記名押印として認められます（電子署名法第3条適合サービス必須）。';
         html += '</div>';
         html += '</div>';
         html += '</div>';
@@ -256,12 +298,25 @@ var DisclosureUI = (function() {
             otherSpecial: $v('dsc-other-special')
         };
         var itEnabled = document.getElementById('dsc-it-enabled');
+        var $chk = function(id) { var el = document.getElementById(id); return el ? el.checked : false; };
         currentOpts.itDisclosure = {
             enabled: itEnabled ? itEnabled.checked : false,
             datetime: $v('dsc-it-datetime'),
             software: $v('dsc-it-software'),
             meetingUrl: $v('dsc-it-meeting-url'),
-            recording: $v('dsc-it-recording')
+            recording: $v('dsc-it-recording'),
+            recordingUrl: $v('dsc-it-recording-url'),
+            eSignService: $v('dsc-it-esign-service'),
+            eSignUrl: $v('dsc-it-esign-url'),
+            attendees: $v('dsc-it-attendees'),
+            checks: {
+                connection: $chk('dsc-it-check-connection'),
+                docDelivery: $chk('dsc-it-check-docDelivery'),
+                identity: $chk('dsc-it-check-identity'),
+                recordingConsent: $chk('dsc-it-check-recordingConsent'),
+                explained: $chk('dsc-it-check-explained'),
+                qa: $chk('dsc-it-check-qa')
+            }
         };
     }
 

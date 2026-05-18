@@ -331,7 +331,7 @@ var Disclosure = (function() {
             html += '</table>';
         }
 
-        // ===== IT重説対応情報 =====
+        // ===== IT重説対応情報 + 電子署名・録画記録（Phase 2 MVP） =====
         if (it.enabled) {
             html += '<div class="it-disclosure-block">';
             html += '<h3>IT重要事項説明 実施情報</h3>';
@@ -340,9 +340,27 @@ var Disclosure = (function() {
             html += '<tr><th>使用ソフトウェア</th><td>' + esc(it.software || 'Zoom / Google Meet / Microsoft Teams 等') + '</td></tr>';
             html += '<tr><th>ビデオ通話URL</th><td style="word-break:break-all;">' + esc(it.meetingUrl || '') + '</td></tr>';
             html += '<tr><th>録画の有無</th><td>' + esc(it.recording || '※録画する場合、相手方の同意取得を別途記録') + '</td></tr>';
-            html += '<tr><th>本人確認方法</th><td>運転免許証等の身分証明書を画面越しに提示確認</td></tr>';
+            html += '<tr><th>録画ファイル保管URL</th><td style="word-break:break-all;">' + esc(it.recordingUrl || '※録画した場合、保管先URL（Google Drive等）を記載') + '</td></tr>';
+            html += '<tr><th>本人確認方法</th><td>' + esc(it.idCheck || '運転免許証等の身分証明書を画面越しに提示確認') + '</td></tr>';
+            html += '<tr><th>参加者</th><td>' + esc(it.attendees || '宅地建物取引士:___ / 買主:___ / 売主:___') + '</td></tr>';
+            html += '<tr><th>電子署名サービス</th><td>' + esc(it.eSignService || '※利用する場合: クラウドサイン / DocuSign / GMOサイン 等') + '</td></tr>';
+            html += '<tr><th>電子署名URL</th><td style="word-break:break-all;">' + esc(it.eSignUrl || '※電子署名ページのURLを記載') + '</td></tr>';
+            html += '<tr><th>署名完了確認</th><td>' + esc(it.eSignStatus || '<span class="check">[ ] 取引士 [ ] 売主 [ ] 買主 全員署名完了</span>') + '</td></tr>';
             html += '</table>';
-            html += '<div class="note">IT重説は国土交通省「ITを活用した重要事項説明に係るマニュアル」に従い、説明開始前の通信状態確認、本人確認、書面到達確認を実施してください。</div>';
+
+            // IT重説実施ログチェックリスト
+            html += '<h3 style="margin-top:14px;">IT重説 実施チェックリスト</h3>';
+            html += '<table>';
+            var checks = it.checks || {};
+            html += '<tr><th>通信状態確認</th><td><span class="check">[' + (checks.connection ? '✓' : ' ') + '] 開始前に映像・音声テスト実施</span></td></tr>';
+            html += '<tr><th>書面到達確認</th><td><span class="check">[' + (checks.docDelivery ? '✓' : ' ') + '] 重説書面・付属書類の事前送付と受領確認</span></td></tr>';
+            html += '<tr><th>本人確認</th><td><span class="check">[' + (checks.identity ? '✓' : ' ') + '] 身分証明書を画面越しに確認</span></td></tr>';
+            html += '<tr><th>録画同意</th><td><span class="check">[' + (checks.recordingConsent ? '✓' : ' ') + '] 録画する場合は事前同意を取得</span></td></tr>';
+            html += '<tr><th>説明完了確認</th><td><span class="check">[' + (checks.explained ? '✓' : ' ') + '] 全条項の説明完了を口頭で確認</span></td></tr>';
+            html += '<tr><th>質疑応答</th><td><span class="check">[' + (checks.qa ? '✓' : ' ') + '] 質問機会の提供と回答</span></td></tr>';
+            html += '</table>';
+
+            html += '<div class="note">IT重説は国土交通省「ITを活用した重要事項説明に係るマニュアル」に従い、上記チェックリスト全項目の完遂が必要です。録画は買主・売主の同意取得が必須。電子署名は宅地建物取引業法施行規則改正（2022年5月）により、宅地建物取引士の電子的記名押印として認められています（電子署名法第3条適合のサービス利用が必須）。</div>';
             html += '</div>';
         }
 
