@@ -13,4 +13,10 @@ compatibility_date = "2024-10-01"
 
 [[kv_namespaces]]
 binding = "LICENSE_DB"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "2a2bec8f757e468791c4089c6df38674"
+
+# カスタムドメイン: license.minatech1210.com
+# 初回 wrangler deploy 時にCloudflareがDNS CNAMEとSSL証明書を自動設定
+[[routes]]
+pattern = "license.minatech1210.com"
+custom_domain = true

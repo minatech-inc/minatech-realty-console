@@ -52,7 +52,7 @@ wrangler secret put ADMIN_TOKEN --config license-server.toml
 wrangler deploy --config license-server.toml
 ```
 
-出力に Worker URL が表示される（例：`https://license-server.isoya-h.workers.dev`）。
+出力に Worker URL が表示される（例：`https://license.minatech1210.com`）。
 
 ---
 
@@ -63,7 +63,7 @@ wrangler deploy --config license-server.toml
 ブラウザのアドレスバーで `https://realty.minatech1210.com/?owner=minatech` を開き、**F12** で開発者ツールを開き、Console タブに：
 
 ```js
-localStorage.setItem('rc_license_endpoint', 'https://license-server.isoya-h.workers.dev/verify');
+localStorage.setItem('rc_license_endpoint', 'https://license.minatech1210.com/verify');
 ```
 
 を入力して Enter。以降、license.js は v2キー検証時にこのエンドポイントを経由します。
@@ -82,7 +82,7 @@ localStorage.setItem('rc_license_endpoint', 'https://license-server.isoya-h.work
 
 ### a) 検証エンドポイント
 ```powershell
-curl -X POST https://license-server.isoya-h.workers.dev/verify `
+curl -X POST https://license.minatech1210.com/verify `
   -H "Content-Type: application/json" `
   -H "Origin: https://realty.minatech1210.com" `
   -d '{"key":"RA-PRO-20271231-MNTH-ca0d2b0c"}'
@@ -91,14 +91,14 @@ curl -X POST https://license-server.isoya-h.workers.dev/verify `
 
 ### b) 管理者 一覧
 ```powershell
-curl https://license-server.isoya-h.workers.dev/admin/list `
+curl https://license.minatech1210.com/admin/list `
   -H "X-Admin-Token: あなたのADMIN_TOKEN"
 ```
 → 発行済みキー一覧（最初は空）
 
 ### c) 管理者 新規発行
 ```powershell
-curl -X POST https://license-server.isoya-h.workers.dev/admin/issue `
+curl -X POST https://license.minatech1210.com/admin/issue `
   -H "Content-Type: application/json" `
   -H "X-Admin-Token: あなたのADMIN_TOKEN" `
   -d '{"plan":"STD","expiryDate":"20271231","companyCode":"M001","customer":{"name":"テスト株式会社","email":"test@example.com"}}'
