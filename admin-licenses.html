@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ライセンス管理（MinaTech 社内専用） | Realty Console</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <style>
+        :root {
+            --bg: #f7f8fb;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-soft: #475569;
+            --text-mute: #94a3b8;
+            --border: #e2e8f0;
+            --accent: #3b82f6;
+            --accent-2: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warn: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter','Noto Sans JP','Hiragino Sans','Yu Gothic',system-ui,sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(135deg, #1e3a8a, #5b21b6);
+            color: #fff;
+            padding: 18px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 { font-size: 18px; font-weight: 700; }
+        header .badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; font-size: 11px; }
+        main { max-width: 1240px; margin: 24px auto; padding: 0 24px; }
+
+        /* Auth Gate */
+        #auth-gate {
+            max-width: 480px;
+            margin: 80px auto;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 10px 30px rgba(15,23,42,0.08);
+        }
+        #auth-gate h2 { font-size: 16px; margin-bottom: 8px; }
+        #auth-gate p { color: var(--text-soft); font-size: 13px; margin-bottom: 18px; }
+        #auth-gate label { display: block; font-size: 12px; color: var(--text-soft); margin-bottom: 4px; }
+        #auth-gate input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
+        #auth-gate button { margin-top: 14px; width: 100%; padding: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        #auth-gate .endpoint-row { font-size: 11px; color: var(--text-mute); margin-top: 14px; }
+        #auth-error { color: var(--danger); font-size: 12px; margin-top: 8px; display: none; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 18px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-soft);
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+        }
+        .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+        .tab:hover { color: var(--text); }
+
+        /* Panel */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .panel h3 { font-size: 14px; margin-bottom: 14px; font-weight: 600; }
+
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .form-row label { display: block; font-size: 11px; color: var(--text-soft); margin-bottom: 4px; }
+        .form-row input, .form-row select, .form-row textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text);
+            transition: all 0.15s;
+        }
+        .btn:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            border: none;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; border: none; }
+        .btn-sm { padding: 5px 10px; font-size: 11px; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { background: #f5f5f7; text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--text-soft); }
+        td { padding: 9px 10px; border-bottom: 1px solid #f1f5f9; }
+        tr:hover { background: #f8fafc; }
+        td.key { font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 11px; }
+        .status-active { background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 8px; font-size: 10px; }
+        .status-revoked { background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 8px; font-size: 10px; }
+        .status-expired { background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 8px; font-size: 10px; }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .stat-num {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1.1;
+        }
+        .stat-label { font-size: 11px; color: var(--text-soft); margin-top: 4px; }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        #toast.in { opacity: 1; transform: translateY(0); }
+        #toast.error { background: var(--danger); }
+        #toast.success { background: var(--success); }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>ライセンス管理パネル</h1>
+    <span class="badge">MinaTech 社内専用</span>
+</header>
+
+<main id="main-content" style="display:none;">
+
+<div class="tabs">
+    <div class="tab active" data-tab="issue">発行</div>
+    <div class="tab" data-tab="list">一覧</div>
+    <div class="tab" data-tab="stats">統計</div>
+    <div class="tab" data-tab="settings">設定</div>
+</div>
+
+<!-- ============== ISSUE TAB ============== -->
+<div class="tab-panel" data-panel="issue">
+    <div class="panel">
+        <h3>新規ライセンスキー発行</h3>
+        <div class="form-grid">
+            <div class="form-row">
+                <label>プラン *</label>
+                <select id="issue-plan">
+                    <option value="TRL">Trial（14日・1名）</option>
+                    <option value="STD" selected>Standard（年・3名）</option>
+                    <option value="PRO">Professional（年・10名）</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>有効期限 *</label>
+                <input type="date" id="issue-expiry">
+            </div>
+            <div class="form-row">
+                <label>会社コード（英数4文字）*</label>
+                <input type="text" id="issue-company-code" maxlength="4" placeholder="M001">
+            </div>
+            <div class="form-row">
+                <label>顧客会社名</label>
+                <input type="text" id="issue-customer-name" placeholder="株式会社○○不動産">
+            </div>
+            <div class="form-row">
+                <label>顧客メールアドレス</label>
+                <input type="email" id="issue-customer-email" placeholder="contact@example.com">
+            </div>
+        </div>
+        <div class="form-row" style="margin-bottom:14px;">
+            <label>メモ（社内用）</label>
+            <textarea id="issue-notes" rows="2" placeholder="例: 神奈川県宅建協会経由、年契約、振込確認済"></textarea>
+        </div>
+        <button id="btn-issue" class="btn-primary btn">発行</button>
+        <div id="issue-result" style="margin-top:18px;"></div>
+    </div>
+</div>
+
+<!-- ============== LIST TAB ============== -->
+<div class="tab-panel" data-panel="list" style="display:none;">
+    <div class="panel">
+        <h3>発行済みライセンス一覧 <span id="list-count" style="font-weight:400;color:var(--text-mute);"></span></h3>
+        <div style="margin-bottom:12px;display:flex;gap:8px;">
+            <input type="text" id="list-filter" placeholder="絞り込み: 会社名・キー・メール" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:6px;">
+            <select id="list-status-filter" style="padding:8px 10px;border:1px solid var(--border);border-radius:6px;">
+                <option value="">全状態</option>
+                <option value="active">アクティブ</option>
+                <option value="revoked">無効化</option>
+                <option value="expired">期限切れ</option>
+            </select>
+            <button class="btn" id="btn-list-refresh">再読込</button>
+        </div>
+        <div id="list-table"></div>
+    </div>
+</div>
+
+<!-- ============== STATS TAB ============== -->
+<div class="tab-panel" data-panel="stats" style="display:none;">
+    <div class="panel">
+        <h3>統計情報</h3>
+        <div class="stats-grid" id="stats-grid"></div>
+    </div>
+</div>
+
+<!-- ============== SETTINGS TAB ============== -->
+<div class="tab-panel" data-panel="settings" style="display:none;">
+    <div class="panel">
+        <h3>接続設定</h3>
+        <div class="form-row">
+            <label>ライセンスサーバーURL（Cloudflare Workers）</label>
+            <input type="url" id="setting-endpoint" placeholder="https://license-server.isoya-h.workers.dev">
+        </div>
+        <div class="form-row" style="margin-top:10px;">
+            <label>ADMIN_TOKEN（Workers側 Secret と一致）</label>
+            <input type="password" id="setting-admin-token">
+        </div>
+        <button class="btn-primary btn" id="btn-save-settings" style="margin-top:14px;">設定を保存</button>
+        <button class="btn" id="btn-logout" style="margin-top:14px;margin-left:8px;">ログアウト（保存値クリア）</button>
+    </div>
+</div>
+
+</main>
+
+<!-- ============== AUTH GATE ============== -->
+<div id="auth-gate">
+    <h2>初回設定</h2>
+    <p>ライセンスサーバー URL と ADMIN_TOKEN を入力してください。<br>※情報はブラウザ内（localStorage）にのみ保存され、外部送信されません。</p>
+    <div class="form-row">
+        <label>ライセンスサーバーURL</label>
+        <input type="url" id="auth-endpoint" placeholder="https://license-server.isoya-h.workers.dev">
+    </div>
+    <div class="form-row" style="margin-top:10px;">
+        <label>ADMIN_TOKEN</label>
+        <input type="password" id="auth-token" placeholder="Workers Secret 登録時の文字列">
+    </div>
+    <button id="btn-auth-login">ログイン</button>
+    <div id="auth-error"></div>
+    <div class="endpoint-row">※ ADMIN_TOKEN は Workers の <code>wrangler secret put ADMIN_TOKEN</code> で設定した値</div>
+</div>
+
+<div id="toast"></div>
+
+<script src="admin-licenses.js?v=20260518a" defer></script>
+</body>
+</html>

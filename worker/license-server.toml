@@ -1,0 +1,16 @@
+name = "license-server"
+main = "license-server.js"
+compatibility_date = "2024-10-01"
+
+# デプロイ前の設定:
+#   1) wrangler secret put LICENSE_SEED --config license-server.toml
+#      → 入力: MinaTech-REINS-2026-ShZ9xK4p （既存license.jsと同一）
+#   2) wrangler secret put ADMIN_TOKEN --config license-server.toml
+#      → 入力: ランダムな長文字列 (例: openssl rand -hex 32 で生成)
+#   3) wrangler kv namespace create LICENSE_DB --config license-server.toml
+#      → 出力されたIDを下の kv_namespaces セクションに貼り付け
+#   4) wrangler deploy --config license-server.toml
+
+[[kv_namespaces]]
+binding = "LICENSE_DB"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

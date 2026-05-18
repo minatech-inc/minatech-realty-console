@@ -34,8 +34,13 @@ var LicenseManager = (function() {
         return out;
     }
 
-    // サーバー検証エンドポイント（将来Cloudflare Workersに設置予定）
-    var LICENSE_VERIFY_ENDPOINT = null; // 例: 'https://license.minatech1210.com/verify'
+    // サーバー検証エンドポイント
+    // localStorage['rc_license_endpoint'] が設定されていれば、そのURLでサーバー検証を実行
+    // 設定例（管理者がブラウザDevToolsで実行）:
+    //   localStorage.setItem('rc_license_endpoint', 'https://license-server.isoya-h.workers.dev/verify');
+    function getVerifyEndpoint() {
+        try { return localStorage.getItem('rc_license_endpoint') || null; } catch (e) { return null; }
+    }
 
     var PLAN_FEATURES = {
         TRL: { name:'トライアル',     maxUsers:1,  csvExport:true, excelExport:false, jsonExport:false, customScoring:false, durationDays:14  },
@@ -199,12 +204,17 @@ var LicenseManager = (function() {
         }
 
         // サーバー検証経路（設定されていれば最優先）
-        if (LICENSE_VERIFY_ENDPOINT) {
+        var verifyUrl = getVerifyEndpoint();
+        if (verifyUrl) {
             try {
-                var res = await fetch(LICENSE_VERIFY_ENDPOINT, {
+                var res = await fetch(verifyUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ key: key, device: getDeviceId() })
+                    body: JSON.stringify({
+                        key: key,
+                        device: getDeviceId(),
+                        hostname: location.hostname
+                    })
                 });
                 if (res.ok) {
                     var server = await res.json();
@@ -212,7 +222,7 @@ var LicenseManager = (function() {
                         audit('license_verified_server', companyCode + '/' + plan);
                         return buildResult(plan, expiryStr, companyCode, 'server', server);
                     }
-                    return { valid: false, message: server.message || 'サーバー検証で無効と判定されました' };
+                    return { valid: false, message: server.message || 'サーバー検証で無効と判定されました', revoked: server.status === 'revoked' };
                 }
             } catch (e) {
                 // サーバー到達不能 → ローカル検証にフォールバック
