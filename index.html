@@ -16,6 +16,7 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="theme.css?v=20260518a">
+    <link rel="stylesheet" href="chat-widget.css?v=20260518a">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -547,5 +548,34 @@
     <script src="portalCheckerUI.js?v=20260517d"></script>
     <script src="app.js?v=20260517b"></script>
     <script src="pdf-analyzer.js?v=20260424e"></script>
+
+    <!-- AI Chat Widget（Console: ライセンスプランに応じてtier動的設定） -->
+    <script>
+      (function() {
+        // ライセンス判定で tier を決定（オーナーモード=professional、PRO=professional、STD=standard、それ以外=非表示）
+        var tier = null;
+        try {
+          if (typeof LicenseManager !== 'undefined') {
+            var lic = LicenseManager.loadLicense();
+            if (lic && lic.valid) {
+              if (lic.plan === 'PRO') tier = 'professional';
+              else if (lic.plan === 'STD') tier = 'standard';
+              // Trial は対象外、自動失効時は何も出さない
+            }
+          }
+        } catch (e) {}
+        if (!tier) return;
+
+        var s = document.createElement('script');
+        s.src = 'chat-widget.js?v=20260518a';
+        s.defer = true;
+        s.setAttribute('data-endpoint', 'https://chat-proxy.minatech-inc.workers.dev');
+        s.setAttribute('data-tier', tier);
+        s.setAttribute('data-greeting', 'Realty Consoleの使い方、スコアリング基準、各機能の操作についてお答えします。お気軽にどうぞ。');
+        s.setAttribute('data-suggestions', 'スコアリングの基準は?|SUUMO入稿の手順は?|物件マスタDBの使い方は?|JSONバックアップ方法は?|画像処理の制限は?');
+        s.setAttribute('data-license-localstorage-key', 'reins_analyzer_license');
+        document.body.appendChild(s);
+      })();
+    </script>
 </body>
 </html>
