@@ -373,6 +373,17 @@
             ContractUI.open(prop);
         });
 
+        // 賃貸借契約書ジェネレータ
+        var btnRentalContract = document.getElementById('btn-rental-contract-header');
+        if (btnRentalContract) btnRentalContract.addEventListener('click', function() {
+            if (typeof RentalContractUI === 'undefined') {
+                alert('賃貸借契約書モジュールが読み込まれていません。');
+                return;
+            }
+            var prop = (analyzedProperties && analyzedProperties.length > 0) ? analyzedProperties[0] : null;
+            RentalContractUI.open(prop);
+        });
+
         // 役所調査チェックリスト
         var btnGovCheck = document.getElementById('btn-govcheck-header');
         if (btnGovCheck) btnGovCheck.addEventListener('click', function() {
