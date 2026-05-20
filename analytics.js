@@ -21,7 +21,7 @@
 
         // === Microsoft Clarity（ヒートマップ・録画・無料） ===
         // Clarity Project ID（10桁前後の英数字）を入力すると有効化
-        CLARITY_PROJECT_ID: 'CLARITY_PROJECT_ID_PLACEHOLDER',
+        CLARITY_PROJECT_ID: 'wtwu86tfto',
 
         // === Google Search Console 認証 ===
         // <meta name="google-site-verification"> タグの content 値を貼り付け
