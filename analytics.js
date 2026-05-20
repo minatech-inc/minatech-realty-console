@@ -17,7 +17,7 @@
     var SEO_CONFIG = {
         // === Google Analytics 4 ===
         // GA4 Measurement ID（"G-" で始まる）を入力すると有効化
-        GA4_MEASUREMENT_ID: 'GA_MEASUREMENT_ID_PLACEHOLDER',
+        GA4_MEASUREMENT_ID: 'G-S2XD6KJ4PM',
 
         // === Microsoft Clarity（ヒートマップ・録画・無料） ===
         // Clarity Project ID（10桁前後の英数字）を入力すると有効化
