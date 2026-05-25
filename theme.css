@@ -388,3 +388,198 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
   .main { padding: 16px !important; }
   .header-right { flex-wrap: wrap; gap: 6px; }
 }
+
+/* ============================================
+   Sidebar Layout (業務SaaS標準パターン)
+   ============================================ */
+
+/* Grid wrapper */
+.rc-app {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 60px);
+}
+
+/* === サイドバー本体 === */
+.rc-sidebar {
+  background: var(--rc-surface) !important;
+  border-right: 1px solid var(--rc-border) !important;
+  padding: 20px 0 28px;
+  position: sticky;
+  top: 60px;  /* ヘッダー高さ分 */
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  z-index: 50;
+}
+
+/* === グループ見出し === */
+.rc-sidebar-group {
+  margin-bottom: 18px;
+}
+.rc-sidebar-group-title {
+  display: block;
+  padding: 4px 22px 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--rc-text-3);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* === ナビアイテム === */
+.rc-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 22px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: left;
+  color: var(--rc-text-2);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  text-decoration: none;
+}
+.rc-sidebar-item:hover {
+  background: var(--rc-accent-soft);
+  color: var(--rc-accent);
+  border-left-color: var(--rc-accent);
+}
+.rc-sidebar-item:focus-visible {
+  outline: 2px solid var(--rc-accent);
+  outline-offset: -2px;
+}
+.rc-sidebar-item-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--rc-text-3);
+}
+.rc-sidebar-item:hover .rc-sidebar-item-icon {
+  color: var(--rc-accent);
+}
+
+/* === メインコンテンツ側 === */
+.rc-main-wrapper {
+  min-width: 0;  /* grid item overflow防止 */
+}
+.rc-main-wrapper .main {
+  max-width: none !important;
+  padding: 28px 36px !important;
+}
+
+/* === スリム化ヘッダー === */
+.header-inner.header-slim {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 20px !important;
+  max-width: none !important;
+  height: 60px !important;
+}
+.header-slim .logo {
+  flex-shrink: 0;
+}
+.header-slim .header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* === ハンバーガーボタン（タブレット以下で表示） === */
+.rc-hamburger {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--rc-border);
+  border-radius: var(--rc-radius-sm);
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  margin-right: 12px;
+  transition: all 0.15s ease;
+}
+.rc-hamburger:hover {
+  background: var(--rc-accent-soft);
+  border-color: var(--rc-accent);
+}
+.rc-hamburger span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--rc-text-2);
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+/* === レスポンシブ：1024px未満はドロワー === */
+@media (max-width: 1023px) {
+  .rc-app {
+    grid-template-columns: 1fr;
+  }
+  .rc-sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 240px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  }
+  .rc-sidebar.open {
+    transform: translateX(0);
+  }
+  .rc-hamburger {
+    display: inline-flex;
+  }
+  .rc-main-wrapper .main {
+    padding: 20px 18px !important;
+  }
+  /* オーバーレイ（モバイル開閉時の背景） */
+  .rc-sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 49;
+  }
+  .rc-sidebar-overlay.show {
+    display: block;
+  }
+}
+
+/* === 中型画面（タブレット縦・1280px未満）：ヘッダー右側を省略 === */
+@media (max-width: 1279px) {
+  .header-slim .nav-extras {
+    display: none;  /* 採点基準・製品紹介リンクをサイドバーに移譲 */
+  }
+}
+
+/* === スマホ === */
+@media (max-width: 768px) {
+  .rc-sidebar {
+    width: min(80vw, 280px);
+  }
+  .rc-main-wrapper .main {
+    padding: 16px 14px !important;
+  }
+  .header-slim .header-badge {
+    display: none;  /* バッジは画面狭い時非表示 */
+  }
+}

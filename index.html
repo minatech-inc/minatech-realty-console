@@ -80,39 +80,92 @@
         </div>
     </div>
 
-    <!-- ヘッダー -->
+    <!-- ヘッダー（スリム版） -->
     <header class="header">
-        <div class="header-inner">
-            <div class="logo brand-mini" style="display:flex;align-items:center;gap:10px;">
-                <img src="logo.svg" alt="MinaTech" style="height:32px;width:auto;">
-                <span class="brand-mini-text">
-                    <span class="brand-mini-name">Realty Console</span>
-                    <span class="brand-mini-sub">Property Operations Platform</span>
-                </span>
+        <div class="header-inner header-slim">
+            <div style="display:flex;align-items:center;">
+                <button class="rc-hamburger" id="rc-hamburger" aria-label="メニュー切替" aria-expanded="false" aria-controls="rc-sidebar">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="logo brand-mini" style="display:flex;align-items:center;gap:10px;">
+                    <img src="logo.svg" alt="MinaTech" style="height:32px;width:auto;">
+                    <span class="brand-mini-text">
+                        <span class="brand-mini-name">Realty Console</span>
+                        <span class="brand-mini-sub">Property Operations Platform</span>
+                    </span>
+                </div>
             </div>
             <div class="header-right">
-                <button id="btn-disclosure-header" class="btn btn-outline btn-sm" title="重要事項説明書の下書きを生成（IT重説対応）" style="margin-right:8px;">重説下書き</button>
-                <button id="btn-contract-header" class="btn btn-outline btn-sm" title="売買契約書の下書きを生成（重説と連携）" style="margin-right:8px;">売買契約書</button>
-                <button id="btn-rental-contract-header" class="btn btn-outline btn-sm" title="賃貸借契約書の下書きを生成（普通借家/定期借家）" style="margin-right:8px;">賃貸借契約書</button>
-                <button id="btn-govcheck-header" class="btn btn-outline btn-sm" title="役所調査・行政手続きのチェックリスト" style="margin-right:8px;">役所調査</button>
-                <button id="btn-portal-checker-header" class="btn btn-outline btn-sm" title="SUUMO / atホーム / HOMES の横断検索と物件HTMLの構造化解析" style="margin-right:8px;">ポータル横断</button>
-                <button id="btn-property-master-header" class="btn btn-outline btn-sm" title="物件マスタDB（永続保存）" style="margin-right:8px;">物件マスタ</button>
-                <button id="btn-image-processor-header" class="btn btn-outline btn-sm" title="画像のSUUMO規格リサイズ・自動マスキング" style="margin-right:8px;">画像処理</button>
-                <button id="btn-suumo-broker-header" class="btn btn-outline btn-sm" title="SUUMO入稿用の業者情報マスタを設定" style="margin-right:10px;">業者情報設定</button>
                 <div class="theme-toggle" role="group" aria-label="テーマ切替" style="margin-right:10px;">
                     <button id="theme-light" type="button" class="active" title="ライトモード" aria-label="ライトモード">☀</button>
                     <button id="theme-dark"  type="button" title="ダークモード" aria-label="ダークモード">☾</button>
                 </div>
                 <div id="license-status" class="license-status"></div>
-                <a href="landing.html" target="_blank" rel="noopener" style="font-size:11px;color:#6b7280;margin-right:10px;text-decoration:none;" title="製品紹介・料金プラン">製品紹介</a>
-                <a href="scoring.html" target="_blank" rel="noopener" style="font-size:11px;color:#3b82f6;margin-right:10px;text-decoration:none;" title="スコアリング基準（10点満点）の公開ページ">採点基準</a>
+                <span class="nav-extras" style="display:inline-flex;align-items:center;gap:10px;">
+                    <a href="landing.html" target="_blank" rel="noopener" style="font-size:11px;color:#6b7280;text-decoration:none;" title="製品紹介・料金プラン">製品紹介</a>
+                    <a href="scoring.html" target="_blank" rel="noopener" style="font-size:11px;color:#3b82f6;text-decoration:none;" title="スコアリング基準（10点満点）の公開ページ">採点基準</a>
+                </span>
                 <div class="header-badge">宅建業者専用</div>
             </div>
         </div>
     </header>
 
-    <!-- メインコンテンツ -->
-    <main class="main">
+    <div class="rc-app">
+        <!-- サイドバー -->
+        <aside class="rc-sidebar" id="rc-sidebar" aria-label="メインナビゲーション">
+            <div class="rc-sidebar-group">
+                <span class="rc-sidebar-group-title">契約書類</span>
+                <button id="btn-disclosure-header" class="rc-sidebar-item" title="重要事項説明書の下書きを生成（IT重説対応）">
+                    <span class="rc-sidebar-item-icon">📋</span>重説下書き
+                </button>
+                <button id="btn-contract-header" class="rc-sidebar-item" title="売買契約書の下書きを生成（重説と連携）">
+                    <span class="rc-sidebar-item-icon">📄</span>売買契約書
+                </button>
+                <button id="btn-rental-contract-header" class="rc-sidebar-item" title="賃貸借契約書の下書きを生成（普通借家/定期借家）">
+                    <span class="rc-sidebar-item-icon">📝</span>賃貸借契約書
+                </button>
+            </div>
+
+            <div class="rc-sidebar-group">
+                <span class="rc-sidebar-group-title">業務支援</span>
+                <button id="btn-govcheck-header" class="rc-sidebar-item" title="役所調査・行政手続きのチェックリスト">
+                    <span class="rc-sidebar-item-icon">🏛</span>役所調査
+                </button>
+                <button id="btn-portal-checker-header" class="rc-sidebar-item" title="SUUMO / atホーム / HOMES の横断検索と物件HTMLの構造化解析">
+                    <span class="rc-sidebar-item-icon">🔎</span>ポータル横断
+                </button>
+                <button id="btn-image-processor-header" class="rc-sidebar-item" title="画像のSUUMO規格リサイズ・自動マスキング">
+                    <span class="rc-sidebar-item-icon">🖼</span>画像処理
+                </button>
+            </div>
+
+            <div class="rc-sidebar-group">
+                <span class="rc-sidebar-group-title">マスタ管理</span>
+                <button id="btn-property-master-header" class="rc-sidebar-item" title="物件マスタDB（永続保存）">
+                    <span class="rc-sidebar-item-icon">🏢</span>物件マスタ
+                </button>
+                <button id="btn-suumo-broker-header" class="rc-sidebar-item" title="SUUMO入稿用の業者情報マスタを設定">
+                    <span class="rc-sidebar-item-icon">⚙</span>業者情報設定
+                </button>
+            </div>
+
+            <div class="rc-sidebar-group">
+                <span class="rc-sidebar-group-title">情報</span>
+                <a href="scoring.html" target="_blank" rel="noopener" class="rc-sidebar-item" title="スコアリング基準（10点満点）の公開ページ">
+                    <span class="rc-sidebar-item-icon">📊</span>採点基準
+                </a>
+                <a href="landing.html" target="_blank" rel="noopener" class="rc-sidebar-item" title="製品紹介・料金プラン">
+                    <span class="rc-sidebar-item-icon">💼</span>製品紹介
+                </a>
+            </div>
+        </aside>
+
+        <!-- サイドバーオーバーレイ（モバイル時のみ表示） -->
+        <div class="rc-sidebar-overlay" id="rc-sidebar-overlay"></div>
+
+        <div class="rc-main-wrapper">
+        <!-- メインコンテンツ -->
+        <main class="main">
         <!-- ステップ案内 -->
         <section class="steps">
             <div class="step">
@@ -501,6 +554,8 @@
             </div>
         </section>
     </main>
+        </div><!-- /.rc-main-wrapper -->
+    </div><!-- /.rc-app -->
 
     <!-- フッター -->
     <footer class="footer">
@@ -563,6 +618,50 @@
     <script src="portalCheckerUI.js?v=20260517d"></script>
     <script src="app.js?v=20260517b"></script>
     <script src="pdf-analyzer.js?v=20260424e"></script>
+
+    <!-- サイドバー開閉（ハンバーガー）+ クリック後の自動閉じ -->
+    <script>
+      (function() {
+        var hamburger = document.getElementById('rc-hamburger');
+        var sidebar   = document.getElementById('rc-sidebar');
+        var overlay   = document.getElementById('rc-sidebar-overlay');
+        if (!hamburger || !sidebar) return;
+
+        function openSidebar() {
+          sidebar.classList.add('open');
+          overlay && overlay.classList.add('show');
+          hamburger.setAttribute('aria-expanded', 'true');
+        }
+        function closeSidebar() {
+          sidebar.classList.remove('open');
+          overlay && overlay.classList.remove('show');
+          hamburger.setAttribute('aria-expanded', 'false');
+        }
+        function toggleSidebar() {
+          if (sidebar.classList.contains('open')) closeSidebar();
+          else openSidebar();
+        }
+
+        hamburger.addEventListener('click', toggleSidebar);
+        overlay && overlay.addEventListener('click', closeSidebar);
+
+        // モバイルでサイドバー内のリンク/ボタンを押したら自動で閉じる
+        sidebar.querySelectorAll('.rc-sidebar-item').forEach(function(item) {
+          item.addEventListener('click', function() {
+            if (window.matchMedia('(max-width: 1023px)').matches) {
+              closeSidebar();
+            }
+          });
+        });
+
+        // ESC で閉じる
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+            closeSidebar();
+          }
+        });
+      })();
+    </script>
 
     <!-- AI Chat Widget（Console: ライセンスプランに応じてtier動的設定） -->
     <script>
