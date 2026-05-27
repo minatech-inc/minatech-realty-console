@@ -393,11 +393,12 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
    Sidebar Layout (業務SaaS標準パターン)
    ============================================ */
 
-/* Grid wrapper */
+/* Flex wrapper（grid だと中身の min-content で潰れる問題を回避） */
 .rc-app {
-  display: grid;
-  grid-template-columns: 240px 1fr;
+  display: flex;
+  align-items: stretch;
   min-height: calc(100vh - 60px);
+  position: relative;
 }
 
 /* === サイドバー本体 === */
@@ -406,10 +407,14 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
   border-right: 1px solid var(--rc-border) !important;
   padding: 20px 0 28px;
   position: sticky;
-  top: 60px;  /* ヘッダー高さ分 */
+  top: 60px;
+  align-self: flex-start;
+  width: 240px;
+  flex-shrink: 0;
   height: calc(100vh - 60px);
   overflow-y: auto;
   z-index: 50;
+  box-sizing: border-box;
 }
 
 /* === グループ見出し === */
@@ -488,11 +493,17 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
 
 /* === メインコンテンツ側 === */
 .rc-main-wrapper {
-  min-width: 0;  /* grid item overflow防止 */
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: hidden;
+  background: var(--rc-bg);
 }
 .rc-main-wrapper .main {
   max-width: none !important;
+  margin: 0 !important;
   padding: 28px 36px !important;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* === スリム化ヘッダー === */
@@ -546,7 +557,7 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
 /* === レスポンシブ：1024px未満はドロワー === */
 @media (max-width: 1023px) {
   .rc-app {
-    grid-template-columns: 1fr;
+    display: block;  /* flexやめてサイドバーをfixed化 */
   }
   .rc-sidebar {
     position: fixed;
@@ -562,6 +573,9 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
   }
   .rc-hamburger {
     display: inline-flex;
+  }
+  .rc-main-wrapper {
+    width: 100%;
   }
   .rc-main-wrapper .main {
     padding: 20px 18px !important;
