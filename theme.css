@@ -450,6 +450,24 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
   color: var(--rc-accent);
   border-left-color: var(--rc-accent);
 }
+
+/* メイン機能（物件評価分析）の視覚強調 */
+.rc-sidebar-item-primary {
+  background: var(--rc-accent-soft);
+  color: var(--rc-accent) !important;
+  border-left-color: var(--rc-accent);
+  font-weight: 600;
+}
+.rc-sidebar-item-primary .rc-sidebar-item-icon {
+  color: var(--rc-accent) !important;
+}
+.rc-sidebar-item-primary:hover {
+  background: var(--rc-accent);
+  color: #fff !important;
+}
+.rc-sidebar-item-primary:hover .rc-sidebar-item-icon {
+  color: #fff !important;
+}
 .rc-sidebar-item:focus-visible {
   outline: 2px solid var(--rc-accent);
   outline-offset: -2px;

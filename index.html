@@ -114,6 +114,16 @@
         <!-- サイドバー -->
         <aside class="rc-sidebar" id="rc-sidebar" aria-label="メインナビゲーション">
             <div class="rc-sidebar-group">
+                <span class="rc-sidebar-group-title">メイン機能</span>
+                <a href="#input-section" class="rc-sidebar-item rc-sidebar-item-primary" id="nav-property-analysis" title="物件のスコアリング・評価分析（10点満点）">
+                    <span class="rc-sidebar-item-icon">📈</span>物件評価分析
+                </a>
+                <button id="btn-open-history-sidebar" class="rc-sidebar-item" title="過去の解析結果を読み込み・比較">
+                    <span class="rc-sidebar-item-icon">🗂</span>解析履歴
+                </button>
+            </div>
+
+            <div class="rc-sidebar-group">
                 <span class="rc-sidebar-group-title">契約書類</span>
                 <button id="btn-disclosure-header" class="rc-sidebar-item" title="重要事項説明書の下書きを生成（IT重説対応）">
                     <span class="rc-sidebar-item-icon">📋</span>重説下書き
@@ -190,7 +200,7 @@
         </section>
 
         <!-- 入力エリア -->
-        <section class="input-section">
+        <section id="input-section" class="input-section">
             <div class="input-header">
                 <h2>物件データ入力</h2>
                 <div class="input-actions">
@@ -660,6 +670,30 @@
             closeSidebar();
           }
         });
+
+        // サイドバーの「解析履歴」を既存の履歴ボタン(btn-open-history)へブリッジ
+        var historyBridge = document.getElementById('btn-open-history-sidebar');
+        if (historyBridge) {
+          historyBridge.addEventListener('click', function() {
+            var orig = document.getElementById('btn-open-history');
+            if (orig) orig.click();
+          });
+        }
+
+        // サイドバーの「物件評価分析」→ スムーズスクロール
+        var analysisNav = document.getElementById('nav-property-analysis');
+        if (analysisNav) {
+          analysisNav.addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = document.getElementById('input-section');
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              // フォーカスを貼り付けエリアへ
+              var paste = document.getElementById('paste-area');
+              if (paste) setTimeout(function() { paste.focus(); }, 400);
+            }
+          });
+        }
       })();
     </script>
 
