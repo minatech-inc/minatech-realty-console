@@ -4,6 +4,7 @@
  * localhost はオーナーバイパスによりライセンスモーダルが自動スキップされる。
  */
 const { test, expect } = require('@playwright/test');
+const { saveDownload, saveHTML } = require('../lib/artifacts');
 
 /** サンプル投入 → 解析実行 → 結果表示 までの共通フロー */
 async function analyzeSample(page) {
@@ -87,6 +88,7 @@ test.describe('出力機能', () => {
             await page.click(btn);
             const download = await dl;
             expect(download.suggestedFilename().length, `${btn} のファイル名が空`).toBeGreaterThan(0);
+            await saveDownload(download);
         }
     });
 
@@ -98,6 +100,7 @@ test.describe('出力機能', () => {
         await page.click('#btn-export-pdf');
         const download = await dl;
         expect(download.suggestedFilename()).toMatch(/\.pdf$/i);
+        await saveDownload(download, 'PDFレポート');
     });
 
     test('銀行担保評価書: ダウンロードが発生する', async ({ page }) => {
@@ -108,6 +111,7 @@ test.describe('出力機能', () => {
         await page.click('#btn-export-bank');
         const download = await dl;
         expect(download.suggestedFilename()).toMatch(/\.pdf$/i);
+        await saveDownload(download, '銀行担保評価書');
     });
 
     test('SUUMO入稿シート: モーダルが開き入稿シートが生成される', async ({ page }) => {
@@ -122,6 +126,8 @@ test.describe('出力機能', () => {
         await page.click('#btn-suumo-export');
         await expect(page.locator('#suumo-export-modal')).toBeVisible();
         await expect(page.locator('#suumo-sheet-body')).not.toBeEmpty();
+        const sheetHTML = await page.locator('#suumo-sheet-body').innerHTML();
+        saveHTML('SUUMO入稿シート.html', sheetHTML, 'SUUMO入稿シート（自動生成）');
         await page.click('#suumo-export-close');
         await expect(page.locator('#suumo-export-modal')).toHaveCount(0);
     });

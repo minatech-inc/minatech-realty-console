@@ -124,6 +124,18 @@ function build() {
     const dateStr = startTime.toLocaleString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     const fileDate = startTime.toISOString().slice(0, 10);
 
+    // 成果物（重説・契約書・帳票等）: artifacts/ 配下の最新日付フォルダを対象
+    const artifactsRoot = path.join(REPORTS_DIR, 'artifacts');
+    let artifactDate = '';
+    let artifactFiles = [];
+    if (fs.existsSync(artifactsRoot)) {
+        const dirs = fs.readdirSync(artifactsRoot).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort();
+        if (dirs.length) {
+            artifactDate = dirs[dirs.length - 1];
+            artifactFiles = fs.readdirSync(path.join(artifactsRoot, artifactDate)).sort();
+        }
+    }
+
     const catRows = cats.map(([cat, list]) => {
         const catFailed = list.filter((t) => statusInfo(t).key === 'fail').length;
         const meta = CATEGORY_LABEL[cat] || { desc: '' };
@@ -230,6 +242,20 @@ function build() {
 
     ${catRows}
 
+    ${artifactFiles.length ? `<section class="cat">
+        <div class="cat-head"><div>
+            <h2>テストで生成された成果物<span class="cat-count">${artifactFiles.length}ファイル</span></h2>
+            <p class="cat-desc">重説・契約書・帳票などの実生成物。ファイル名をクリックすると内容を確認できます（サンプル物件データ使用・実務利用不可）。</p>
+        </div></div>
+        <table><tbody>
+        ${artifactFiles.map((f) => `<tr>
+            <td class="td-icon"><svg viewBox="0 0 20 20" class="ti" style="stroke:var(--blue);"><path d="M12 2H5a1.5 1.5 0 0 0-1.5 1.5v13A1.5 1.5 0 0 0 5 18h10a1.5 1.5 0 0 0 1.5-1.5V6.5z"/><polyline points="12 2 12 6.5 16.5 6.5"/></svg></td>
+            <td class="td-name"><a href="artifacts/${esc(artifactDate)}/${encodeURIComponent(f)}" style="color:var(--blue);text-decoration:none;">${esc(f)}</a></td>
+            <td class="td-status"></td><td class="td-dur"></td>
+        </tr>`).join('\n')}
+        </tbody></table>
+    </section>` : ''}
+
     <p class="foot">
         MinaTech Realty Console 自動テスト ／ Playwright + Chromium（実ブラウザ検証）<br>
         このレポートは自動生成されています。失敗項目がある場合はエラー内容を添えて開発担当へ連携してください。
@@ -244,12 +270,19 @@ function build() {
     fs.writeFileSync(outPath, html, 'utf8');
     console.log('[report] 生成: ' + outPath);
 
-    // デスクトップの MinaTech-Reports にも複製
+    // デスクトップの MinaTech-Reports にも複製（レポート + 成果物）
     const desktopDir = path.join(os.homedir(), 'Desktop', 'MinaTech-Reports');
     if (fs.existsSync(desktopDir)) {
         const dest = path.join(desktopDir, outName);
         fs.copyFileSync(outPath, dest);
         console.log('[report] 複製: ' + dest);
+        if (artifactFiles.length) {
+            const srcDir = path.join(artifactsRoot, artifactDate);
+            const dstDir = path.join(desktopDir, 'artifacts', artifactDate);
+            fs.mkdirSync(dstDir, { recursive: true });
+            artifactFiles.forEach((f) => fs.copyFileSync(path.join(srcDir, f), path.join(dstDir, f)));
+            console.log('[report] 成果物複製: ' + dstDir + '（' + artifactFiles.length + 'ファイル）');
+        }
     }
 
     console.log(`[report] 合格 ${passed + flaky} ／ 失敗 ${failed} ／ スキップ ${skipped}（成功率 ${Math.round(((passed + flaky) / Math.max(1, tests.length)) * 100)}%）`);

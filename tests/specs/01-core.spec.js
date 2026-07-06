@@ -3,6 +3,7 @@
  * 実ブラウザに本番モジュールを読み込み、公開APIを直接検証する。
  */
 const { test, expect } = require('@playwright/test');
+const { saveHTML } = require('../lib/artifacts');
 
 const SAMPLE_PROP_TEXT = [
     '物件名: 藤沢市南藤沢 一棟マンション',
@@ -90,12 +91,17 @@ test.describe('コアロジック', () => {
             const out = {};
             keys.forEach((k) => {
                 const html = Disclosure.buildHTML(prop, { formatKey: k });
-                out[k] = typeof html === 'string' && html.length > 500 && html.indexOf('重要事項') >= 0;
+                out[k] = {
+                    ok: typeof html === 'string' && html.length > 500 && html.indexOf('重要事項') >= 0,
+                    label: (Disclosure.FORMATS[k] && Disclosure.FORMATS[k].label) || k,
+                    html: html
+                };
             });
             return out;
         }, SAMPLE_PROP_TEXT);
-        for (const [key, ok] of Object.entries(result)) {
-            expect(ok, `重説形式 ${key} の生成に失敗`).toBe(true);
+        for (const [key, r] of Object.entries(result)) {
+            expect(r.ok, `重説形式 ${key} の生成に失敗`).toBe(true);
+            saveHTML(`重説下書き_${key}.html`, r.html, `重要事項説明書 下書き（${r.label}）`);
         }
     });
 
@@ -106,12 +112,17 @@ test.describe('コアロジック', () => {
             const out = {};
             keys.forEach((k) => {
                 const html = Contract.buildHTML(prop, { formatKey: k });
-                out[k] = typeof html === 'string' && html.length > 500 && html.indexOf('契約') >= 0;
+                out[k] = {
+                    ok: typeof html === 'string' && html.length > 500 && html.indexOf('契約') >= 0,
+                    label: (Contract.FORMATS[k] && Contract.FORMATS[k].label) || k,
+                    html: html
+                };
             });
             return out;
         }, SAMPLE_PROP_TEXT);
-        for (const [key, ok] of Object.entries(result)) {
-            expect(ok, `売買契約書形式 ${key} の生成に失敗`).toBe(true);
+        for (const [key, r] of Object.entries(result)) {
+            expect(r.ok, `売買契約書形式 ${key} の生成に失敗`).toBe(true);
+            saveHTML(`売買契約書_${key}.html`, r.html, `売買契約書 下書き（${r.label}）`);
         }
     });
 
@@ -122,13 +133,18 @@ test.describe('コアロジック', () => {
             const out = {};
             keys.forEach((k) => {
                 const html = RentalContract.buildHTML(prop, { formatKey: k });
-                out[k] = typeof html === 'string' && html.length > 300;
+                out[k] = {
+                    ok: typeof html === 'string' && html.length > 300,
+                    label: (RentalContract.FORMATS[k] && RentalContract.FORMATS[k].label) || k,
+                    html: html
+                };
             });
             return out;
         }, SAMPLE_PROP_TEXT);
         expect(Object.keys(result).length).toBeGreaterThanOrEqual(2);
-        for (const [key, ok] of Object.entries(result)) {
-            expect(ok, `賃貸借契約書形式 ${key} の生成に失敗`).toBe(true);
+        for (const [key, r] of Object.entries(result)) {
+            expect(r.ok, `賃貸借契約書形式 ${key} の生成に失敗`).toBe(true);
+            saveHTML(`賃貸借契約書_${key}.html`, r.html, `賃貸借契約書 下書き（${r.label}）`);
         }
     });
 
