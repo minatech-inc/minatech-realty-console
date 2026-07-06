@@ -17,3 +17,9 @@ Thumbs.db
 templates/*
 !templates/README.md
 *.pdf
+
+# テスト関連（自動生成物）
+node_modules/
+test-results/
+tests/reports/
+tests/fixtures/

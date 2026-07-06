@@ -1,0 +1,15 @@
+{
+  "name": "minatech-realty-console-tests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Realty Console 全項目自動テスト",
+  "scripts": {
+    "test": "playwright test --grep-invert @heavy",
+    "test:full": "playwright test",
+    "test:heavy": "playwright test --grep @heavy",
+    "report": "node tests/lib/make-report.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
+}
