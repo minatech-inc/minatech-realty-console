@@ -219,10 +219,30 @@ var DisclosureUI = (function() {
         html += '</div>';
         html += '</div>';
 
+        // 協会Word様式への自動差し込み（原本ベース・推奨）
+        html += '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:14px;margin-top:12px;">';
+        html += '<div style="font-weight:600;margin-bottom:4px;color:#166534;">協会Word様式へ自動入力（原本ベース・推奨）</div>';
+        html += '<div style="font-size:11.5px;color:#166534;line-height:1.7;margin-bottom:10px;">';
+        html += '全日ラビーネットの公式Word様式に、物件・業者・宅建士情報を自動入力して記入済みWordを生成します。';
+        html += '法定記載事項は原本様式のまま保持され、法令制限等の専門判断項目はWord上で宅建士が追記します。';
+        html += '様式ファイルは templates／重要事項説明書 フォルダから選択してください（現在対応: 区分所有建物の売買・交換用）。';
+        html += '</div>';
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;margin-bottom:10px;">';
+        html += inputRow('代表者氏名', 'dsc-ceo-name', loadExtra().ceoName || '');
+        html += inputRow('売主氏名', 'dsc-seller-name', loadExtra().sellerName || '');
+        html += inputRow('売主住所', 'dsc-seller-addr', loadExtra().sellerAddr || '');
+        html += '</div>';
+        html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">';
+        html += '<input type="file" id="dsc-docx-file" accept=".docx" style="font-size:12px;">';
+        html += '<button id="dsc-docx-fill" class="btn btn-primary btn-sm">記入済みWordを生成</button>';
+        html += '</div>';
+        html += '<div id="dsc-docx-status" style="font-size:12px;margin-top:8px;"></div>';
+        html += '</div>';
+
         // アクション
         html += '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid #e3e8ef;">';
-        html += '<button id="dsc-preview" class="btn btn-outline">プレビュー</button>';
-        html += '<button id="dsc-export-pdf" class="btn btn-primary">PDF出力</button>';
+        html += '<button id="dsc-preview" class="btn btn-outline">HTML下書き（参考）</button>';
+        html += '<button id="dsc-export-pdf" class="btn btn-primary">PDF出力（参考）</button>';
         html += '</div>';
 
         // プレビューエリア
@@ -243,6 +263,69 @@ var DisclosureUI = (function() {
         };
         document.getElementById('dsc-preview').onclick = preview;
         document.getElementById('dsc-export-pdf').onclick = exportPDF;
+        document.getElementById('dsc-docx-fill').onclick = fillOfficialDocx;
+    }
+
+    // ===== 協会Word様式への差し込み =====
+    var EXTRA_KEY = 'rc_dsc_extra';
+    function loadExtra() {
+        try { return JSON.parse(localStorage.getItem(EXTRA_KEY) || '{}'); } catch (e) { return {}; }
+    }
+    function saveExtra(data) {
+        try { localStorage.setItem(EXTRA_KEY, JSON.stringify(data)); } catch (e) {}
+    }
+    function val(id) {
+        var el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+    }
+
+    async function fillOfficialDocx() {
+        var status = document.getElementById('dsc-docx-status');
+        var fileInput = document.getElementById('dsc-docx-file');
+        function setStatus(msg, color) { status.textContent = msg; status.style.color = color || '#166534'; }
+
+        if (typeof DisclosureDocx === 'undefined') { setStatus('差し込みエンジンが読み込まれていません', '#dc2626'); return; }
+        if (!currentProp) { setStatus('先に Step 1 で対象物件を選択してください', '#dc2626'); return; }
+        if (!fileInput.files || !fileInput.files.length) { setStatus('様式ファイル（.docx）を選択してください', '#dc2626'); return; }
+
+        var extra = { ceoName: val('dsc-ceo-name'), sellerName: val('dsc-seller-name'), sellerAddr: val('dsc-seller-addr') };
+        saveExtra(extra);
+
+        // 業者情報: Step2入力値 → SUUMO業者マスタの順で採用
+        var master = {};
+        try { master = JSON.parse(localStorage.getItem('suumo_broker_master') || '{}'); } catch (e) {}
+        var broker = {
+            social_name: val('dsc-broker-name') || master.social_name || '',
+            license_number: val('dsc-broker-license') || master.license_number || '',
+            address: val('dsc-broker-address') || master.address || '',
+            phone: val('dsc-broker-tel') || master.phone || ''
+        };
+        var agent = {
+            ceoName: extra.ceoName,
+            agentName: val('dsc-agent-name'),
+            agentReg: val('dsc-agent-license'),
+            office: broker.social_name
+        };
+
+        setStatus('生成中…');
+        try {
+            var buf = await fileInput.files[0].arrayBuffer();
+            var values = DisclosureDocx.buildValues(currentProp, broker, agent, { sellerAddr: extra.sellerAddr, sellerName: extra.sellerName });
+            var result = await DisclosureDocx.fill(buf, values);
+
+            var propName = (currentProp['物件名'] || '物件').replace(/[\\/:*?"<>|]/g, '');
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(result.blob);
+            a.download = '記入済_重要事項説明書_' + propName + '.docx';
+            a.click();
+            setTimeout(function() { URL.revokeObjectURL(a.href); }, 5000);
+
+            var msg = result.formatTitle + ' に ' + result.filled + '/' + result.mappable + ' 項目を自動入力しました。Wordで開き、法令制限等の残り項目を宅建士が確認・追記してください。';
+            if (result.warnings.length) msg += '　注意: ' + result.warnings.join(' ');
+            setStatus(msg, result.warnings.length ? '#b45309' : '#166534');
+        } catch (e) {
+            setStatus('生成に失敗しました: ' + (e && e.message ? e.message : e), '#dc2626');
+        }
     }
 
     function inputRow(label, id, value, placeholder) {
