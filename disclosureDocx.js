@@ -36,8 +36,36 @@ var DisclosureDocx = (function() {
                 38: 'bldgName', 41: 'roomNo', 42: 'jukyoHyoji',
                 43: 'siteAddr', 51: 'bldgName', 54: 'areaWallCore'
             }
+        },
+        {
+            key: 'sale_landhouse',
+            title: '重要事項説明書［土地建物の売買・交換用］',
+            fingerprint: { texts: 328 },
+            map: {
+                5: 'brokerAddrTel', 7: 'brokerName', 9: 'brokerCeo',
+                13: 'licPref', 14: 'licCount', 15: 'licNo',
+                19: 'agentName', 21: 'agentRegPref', 22: 'agentRegNo',
+                25: 'agentOffice', 27: 'agentOfficeAddrTel',
+                33: 'sellerAddr', 34: 'sellerName',
+                38: 'siteAddr', 41: 'landArea',
+                84: 'siteAddr', 86: 'jukyoHyoji'
+            }
+        },
+        {
+            key: 'rent_residential',
+            title: '重要事項説明書［住宅用建物貸借］',
+            fingerprint: { texts: 210 },
+            map: {
+                4: 'brokerAddrTel', 6: 'brokerName', 8: 'brokerCeo',
+                12: 'licPref', 13: 'licCount', 14: 'licNo',
+                18: 'agentName', 20: 'agentRegPref', 21: 'agentRegNo',
+                24: 'agentOffice', 26: 'agentOfficeAddrTel',
+                32: 'lessorAddr', 33: 'lessorName',
+                35: 'bldgName', 37: 'roomNo', 38: 'jukyoHyoji',
+                44: 'madori', 45: 'floorArea'
+            }
         }
-        // 土地建物売買・住宅用賃借などは順次追加
+        // 残様式（土地売買・宅建業者用3種・事業用賃借・土地賃借）は順次追加
     ];
 
     // ===== JSZip 遅延読込 =====
@@ -97,11 +125,16 @@ var DisclosureDocx = (function() {
             agentOfficeAddrTel: joinNonEmpty([broker.address, broker.phone ? 'TEL:' + broker.phone : ''], '　'),
             sellerAddr: parties.sellerAddr || '',
             sellerName: parties.sellerName || '',
+            lessorAddr: parties.sellerAddr || '',
+            lessorName: parties.sellerName || '',
             bldgName: name.replace(/\s*\d{1,4}\s*号?室?\s*$/, '') || name,
             roomNo: roomMatch ? roomMatch[1] : '',
             jukyoHyoji: prop['所在地'] || '',
             siteAddr: prop['所在地'] || '',
-            areaWallCore: prop['専有面積(㎡)'] || prop['面積(㎡)'] || ''
+            areaWallCore: prop['専有面積(㎡)'] || prop['面積(㎡)'] || '',
+            landArea: prop['土地面積(㎡)'] || '',
+            madori: prop['間取り'] || '',
+            floorArea: prop['専有面積(㎡)'] || prop['面積(㎡)'] || ''
         };
     }
 
@@ -110,12 +143,14 @@ var DisclosureDocx = (function() {
     }
 
     // ===== docx 差し込み本体 =====
-    function detectFormat(xml) {
+    // タイトル一致で候補を絞り、フィールド数が一致するものを優先
+    // （宅建業者用様式は一般用とタイトルが同一のため、数で判別する）
+    function detectFormat(xml, textFieldCount) {
         var plain = xml.replace(/<[^>]+>/g, '').slice(0, 2000);
-        for (var i = 0; i < FORMATS.length; i++) {
-            if (plain.indexOf(FORMATS[i].title) >= 0) return FORMATS[i];
-        }
-        return null;
+        var candidates = FORMATS.filter(function(f) { return plain.indexOf(f.title) >= 0; });
+        if (!candidates.length) return null;
+        var exact = candidates.filter(function(f) { return f.fingerprint.texts === textFieldCount; });
+        return exact[0] || candidates[0];
     }
 
     /** document.xml から FORMTEXT フィールド位置を文書順に抽出 */
@@ -168,10 +203,10 @@ var DisclosureDocx = (function() {
         if (!docFile) throw new Error('Word文書として読み込めませんでした（document.xmlなし）');
         var xml = await docFile.async('string');
 
-        var fmt = detectFormat(xml);
+        var fields = scanTextFields(xml);
+        var fmt = detectFormat(xml, fields.length);
         if (!fmt) throw new Error('対応していない様式です。現在対応: ' + FORMATS.map(function(f) { return f.title; }).join(' / '));
 
-        var fields = scanTextFields(xml);
         var warnings = [];
         if (fmt.fingerprint.texts && fields.length !== fmt.fingerprint.texts) {
             warnings.push('様式のフィールド数が想定(' + fmt.fingerprint.texts + ')と異なります(' + fields.length + ')。様式が改訂された可能性があるため、出力内容を必ず確認してください。');

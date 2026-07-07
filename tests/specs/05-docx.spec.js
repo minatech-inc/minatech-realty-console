@@ -94,6 +94,71 @@ test.describe('協会Word様式差し込み', () => {
         );
     });
 
+    test('土地建物売買様式: 差し込みが完走し土地面積が正着する', async ({ page }) => {
+        test.setTimeout(90 * 1000);
+        await page.goto('/index.html');
+        await page.waitForFunction(() => typeof DisclosureDocx !== 'undefined');
+        const result = await page.evaluate(async (sample) => {
+            const url = '/' + ['templates', '重要事項説明書', '重要事項説明書（土地建物の売買・交換用）.docx'].map(encodeURIComponent).join('/');
+            const res = await fetch(url);
+            const buf = await res.arrayBuffer();
+            const prop = { '物件名': '藤沢市鵠沼海岸 戸建', '所在地': '神奈川県藤沢市鵠沼海岸2丁目', '土地面積(㎡)': '120.5', '建物面積(㎡)': '95.2' };
+            const values = DisclosureDocx.buildValues(prop, sample.broker, sample.agent, sample.parties);
+            const out = await DisclosureDocx.fill(buf, values);
+            const zip = await JSZip.loadAsync(out.blob);
+            const plain = (await zip.file('word/document.xml').async('string')).replace(/<[^>]+>/g, '');
+            const i = plain.indexOf('120.5');
+            return {
+                formatKey: out.formatKey, filled: out.filled, mappable: out.mappable,
+                warnings: out.warnings,
+                landAreaCtx: i >= 0 ? plain.slice(i, i + 20).replace(/\s+/g, '') : null,
+                b64: await zip.generateAsync({ type: 'base64' })
+            };
+        }, SAMPLE);
+        expect(result.formatKey).toBe('sale_landhouse');
+        expect(result.filled).toBe(result.mappable);
+        expect(result.warnings).toHaveLength(0);
+        expect(result.landAreaCtx, '土地面積がm2欄に正着').toContain('m2');
+        ensureDir();
+        fs.writeFileSync(path.join(ARTIFACTS_DIR, '記入済_重要事項説明書（土地建物売買）.docx'), Buffer.from(result.b64, 'base64'));
+    });
+
+    test('住宅用賃借様式: 貸主・間取り・床面積が正着する', async ({ page }) => {
+        test.setTimeout(90 * 1000);
+        await page.goto('/index.html');
+        await page.waitForFunction(() => typeof DisclosureDocx !== 'undefined');
+        const result = await page.evaluate(async (sample) => {
+            const url = '/' + ['templates', '重要事項説明書', '重要事項説明書（住宅用建物賃借）.docx'].map(encodeURIComponent).join('/');
+            const res = await fetch(url);
+            const buf = await res.arrayBuffer();
+            const prop = { '物件名': 'グランメール藤沢 203号室', '所在地': '神奈川県藤沢市南藤沢3丁目', '専有面積(㎡)': '25.8', '間取り': '1K' };
+            const values = DisclosureDocx.buildValues(prop, sample.broker, sample.agent, sample.parties);
+            const out = await DisclosureDocx.fill(buf, values);
+            const zip = await JSZip.loadAsync(out.blob);
+            const plain = (await zip.file('word/document.xml').async('string')).replace(/<[^>]+>/g, '');
+            function ctxBefore(v) {
+                const i = plain.indexOf(v);
+                return i >= 0 ? plain.slice(Math.max(0, i - 30), i) : null;
+            }
+            return {
+                formatKey: out.formatKey, filled: out.filled, mappable: out.mappable,
+                warnings: out.warnings,
+                lessorCtx: ctxBefore(values.lessorName),
+                madoriCtx: ctxBefore('1K'),
+                areaCtx: ctxBefore('25.8'),
+                b64: await zip.generateAsync({ type: 'base64' })
+            };
+        }, SAMPLE);
+        expect(result.formatKey).toBe('rent_residential');
+        expect(result.filled).toBe(result.mappable);
+        expect(result.warnings).toHaveLength(0);
+        expect(result.lessorCtx, '貸主氏名欄').toContain('氏名');
+        expect(result.madoriCtx, '間取り欄').toContain('間取り');
+        expect(result.areaCtx, '床面積欄').toContain('床面積');
+        ensureDir();
+        fs.writeFileSync(path.join(ARTIFACTS_DIR, '記入済_重要事項説明書（住宅用賃借）.docx'), Buffer.from(result.b64, 'base64'));
+    });
+
     test('免許番号パース: 各表記ゆれに対応する', async ({ page }) => {
         await page.goto('/index.html');
         await page.waitForFunction(() => typeof DisclosureDocx !== 'undefined');

@@ -225,12 +225,12 @@ var DisclosureUI = (function() {
         html += '<div style="font-size:11.5px;color:#166534;line-height:1.7;margin-bottom:10px;">';
         html += '全日ラビーネットの公式Word様式に、物件・業者・宅建士情報を自動入力して記入済みWordを生成します。';
         html += '法定記載事項は原本様式のまま保持され、法令制限等の専門判断項目はWord上で宅建士が追記します。';
-        html += '様式ファイルは templates／重要事項説明書 フォルダから選択してください（現在対応: 区分所有建物の売買・交換用）。';
+        html += '様式ファイルは templates／重要事項説明書 フォルダから選択してください（現在対応: 区分所有売買／土地建物売買／住宅用賃借）。';
         html += '</div>';
         html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;margin-bottom:10px;">';
         html += inputRow('代表者氏名', 'dsc-ceo-name', loadExtra().ceoName || '');
-        html += inputRow('売主氏名', 'dsc-seller-name', loadExtra().sellerName || '');
-        html += inputRow('売主住所', 'dsc-seller-addr', loadExtra().sellerAddr || '');
+        html += inputRow('売主（貸主）氏名', 'dsc-seller-name', loadExtra().sellerName || '');
+        html += inputRow('売主（貸主）住所', 'dsc-seller-addr', loadExtra().sellerAddr || '');
         html += '</div>';
         html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">';
         html += '<input type="file" id="dsc-docx-file" accept=".docx" style="font-size:12px;">';
