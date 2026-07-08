@@ -309,6 +309,15 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
   color: var(--rc-accent);
   box-shadow: var(--rc-shadow-sm);
 }
+.theme-toggle button svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 /* === ブランドロゴ刷新 === */
 .brand-mini {
@@ -431,36 +440,36 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
   text-transform: uppercase;
 }
 
-/* === ナビアイテム === */
+/* === ナビアイテム（角丸ピル型・業務SaaS標準） === */
 .rc-sidebar-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 22px;
-  width: 100%;
+  padding: 8px 10px;
+  margin: 1px 12px;
+  width: calc(100% - 24px);
   background: transparent;
   border: none;
+  border-radius: 8px;
   text-align: left;
   color: var(--rc-text-2);
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
-  border-left: 3px solid transparent;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
   font-family: inherit;
   text-decoration: none;
+  box-sizing: border-box;
 }
 .rc-sidebar-item:hover {
   background: var(--rc-accent-soft);
   color: var(--rc-accent);
-  border-left-color: var(--rc-accent);
 }
 
 /* メイン機能（物件評価分析）の視覚強調 */
 .rc-sidebar-item-primary {
   background: var(--rc-accent-soft);
   color: var(--rc-accent) !important;
-  border-left-color: var(--rc-accent);
   font-weight: 600;
 }
 .rc-sidebar-item-primary .rc-sidebar-item-icon {
@@ -484,11 +493,23 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
   color: var(--rc-text-3);
+}
+.rc-sidebar-item-icon svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .rc-sidebar-item:hover .rc-sidebar-item-icon {
   color: var(--rc-accent);
+}
+/* グループ見出しをアイテム内文字と左揃えに（12pxマージン + 10pxパディング） */
+.rc-sidebar-group-title {
+  padding-left: 22px;
 }
 
 /* === メインコンテンツ側 === */
@@ -614,4 +635,23 @@ table tr:hover td { background: var(--rc-accent-soft) !important; }
   .header-slim .header-badge {
     display: none;  /* バッジは画面狭い時非表示 */
   }
+}
+
+/* === カテゴリ/分析モード選択バーのダークテーマ対応 === */
+:root[data-theme="dark"] .analysis-config {
+  background: var(--rc-bg-soft);
+  border-color: var(--rc-border);
+}
+:root[data-theme="dark"] .config-label {
+  color: var(--rc-text-2);
+}
+:root[data-theme="dark"] .radio-group label {
+  background: var(--rc-surface);
+  border-color: var(--rc-border);
+  color: var(--rc-text-2);
+}
+:root[data-theme="dark"] .radio-group label:has(input:checked) {
+  background: var(--rc-accent);
+  border-color: var(--rc-accent);
+  color: #fff;
 }

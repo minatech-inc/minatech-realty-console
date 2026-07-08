@@ -856,7 +856,8 @@ body {
     cursor: pointer;
 }
 .pdf-drop.dragover { background: #fff7e4; border-color: #0a2540; }
-.pdf-drop-icon { font-size: 48px; margin-bottom: 12px; }
+.pdf-drop-icon { margin-bottom: 12px; display: flex; justify-content: center; }
+.pdf-drop-icon svg { width: 44px; height: 44px; stroke: var(--rc-accent, #3b82f6); stroke-width: 1.4; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0.75; }
 .pdf-drop-text { font-size: 16px; font-weight: 600; color: #0a2540; margin-bottom: 6px; }
 .pdf-drop-sub { font-size: 13px; color: #666; margin-bottom: 18px; }
 .pdf-options {
