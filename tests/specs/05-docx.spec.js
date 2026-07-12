@@ -174,18 +174,52 @@ test.describe('協会Word様式差し込み', () => {
         expect(r.d).toEqual({ pref: '神奈川県', no: '123456' });
     });
 
-    test('非対応様式: 明確なエラーメッセージを返す', async ({ page }) => {
+    test('全9様式: 差し込みが完走し様式判別（一般/業者用のフィールド数判別含む）が正しい', async ({ page }) => {
+        test.setTimeout(180 * 1000);
         await page.goto('/index.html');
         await page.waitForFunction(() => typeof DisclosureDocx !== 'undefined');
-        const msg = await page.evaluate(async () => {
-            // 土地売買様式（未対応）を投入
-            const res = await fetch('/' + ['templates', '重要事項説明書', '重要事項説明書（土地の売買・交換用）.docx'].map(encodeURIComponent).join('/'));
-            const buf = await res.arrayBuffer();
-            try {
-                await DisclosureDocx.fill(buf, {});
-                return 'エラーが発生しなかった';
-            } catch (e) { return e.message; }
-        });
-        expect(msg).toContain('対応していない様式');
+
+        const FORMS = [
+            ['重要事項説明書（土地の売買・交換用）.docx', 'sale_land'],
+            ['重要事項説明書（土地の売買・交換用）（宅建業者用）.docx', 'sale_land_biz'],
+            ['重要事項説明書（土地建物の売買・交換用）.docx', 'sale_landhouse'],
+            ['重要事項説明書（土地建物の売買・交換用）（宅建業者用）.docx', 'sale_landhouse_biz'],
+            ['重要事項説明書（区分所有建物の売買・交換用）.docx', 'sale_condo'],
+            ['重要事項説明書（区分所有建物の売買・交換用）（宅建業者用）.docx', 'sale_condo_biz'],
+            ['重要事項説明書（住宅用建物賃借）.docx', 'rent_residential'],
+            ['重要事項説明書（事業用建物賃借）.docx', 'rent_commercial'],
+            ['重要事項説明書（土地賃借用）.docx', 'rent_land']
+        ];
+
+        const prop = {
+            '物件名': 'シーサイド湘南 505号室', '所在地': '神奈川県藤沢市南藤沢3丁目',
+            '専有面積(㎡)': '42.5', '土地面積(㎡)': '120.5', '間取り': '1LDK'
+        };
+
+        ensureDir();
+        for (const [file, expectedKey] of FORMS) {
+            const result = await page.evaluate(async ({ file, sample, prop }) => {
+                const url = '/' + ['templates', '重要事項説明書', file].map(encodeURIComponent).join('/');
+                const res = await fetch(url);
+                if (!res.ok) return { error: file + ' 取得失敗 ' + res.status };
+                const buf = await res.arrayBuffer();
+                const values = DisclosureDocx.buildValues(prop, sample.broker, sample.agent, sample.parties);
+                const out = await DisclosureDocx.fill(buf, values);
+                const zip = await JSZip.loadAsync(out.blob);
+                return {
+                    formatKey: out.formatKey, filled: out.filled, mappable: out.mappable,
+                    warnings: out.warnings, b64: await zip.generateAsync({ type: 'base64' })
+                };
+            }, { file, sample: SAMPLE, prop });
+
+            expect(result.error, result.error).toBeUndefined();
+            expect(result.formatKey, `${file} の様式判別`).toBe(expectedKey);
+            expect(result.filled, `${file} の差し込み件数`).toBe(result.mappable);
+            expect(result.warnings, `${file} の警告`).toHaveLength(0);
+            fs.writeFileSync(
+                path.join(ARTIFACTS_DIR, '記入済_' + file),
+                Buffer.from(result.b64, 'base64')
+            );
+        }
     });
 });

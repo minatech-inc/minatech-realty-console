@@ -64,8 +64,109 @@ var DisclosureDocx = (function() {
                 35: 'bldgName', 37: 'roomNo', 38: 'jukyoHyoji',
                 44: 'madori', 45: 'floorArea'
             }
+        },
+        {
+            key: 'sale_land',
+            title: '重要事項説明書［土地の売買・交換用］',
+            fingerprint: { texts: 278 },
+            map: {
+                5: 'brokerAddrTel', 7: 'brokerName', 9: 'brokerCeo',
+                13: 'licPref', 14: 'licCount', 15: 'licNo',
+                19: 'agentName', 21: 'agentRegPref', 22: 'agentRegNo',
+                25: 'agentOffice', 27: 'agentOfficeAddrTel',
+                33: 'sellerAddr', 34: 'sellerName',
+                38: 'siteAddr', 41: 'landArea'
+            }
+        },
+        // ---- 宅建業者売主用（自社が売主のとき: 冒頭に自社+宅建士ブロック） ----
+        {
+            key: 'sale_land_biz',
+            title: '重要事項説明書［土地の売買・交換用］',
+            fingerprint: { texts: 292 },
+            map: {
+                4: 'licPref', 5: 'licCount', 6: 'licNo',
+                7: 'agentRegPref', 8: 'agentRegNo',
+                9: 'brokerAddr', 10: 'agentName', 11: 'agentOfficeAddrTel',
+                12: 'brokerName', 13: 'brokerCeo', 14: 'brokerTel',
+                47: 'sellerAddrBiz', 48: 'sellerNameBiz',
+                52: 'siteAddr', 55: 'landArea'
+            }
+        },
+        {
+            key: 'sale_landhouse_biz',
+            title: '重要事項説明書［土地建物の売買・交換用］',
+            fingerprint: { texts: 343 },
+            map: {
+                4: 'licPref', 5: 'licCount', 6: 'licNo',
+                7: 'agentRegPref', 8: 'agentRegNo',
+                9: 'brokerAddr', 10: 'agentName', 11: 'agentOfficeAddrTel',
+                12: 'brokerName', 13: 'brokerCeo', 14: 'brokerTel',
+                47: 'sellerAddrBiz', 48: 'sellerNameBiz',
+                52: 'siteAddr', 55: 'landArea',
+                98: 'siteAddr', 100: 'jukyoHyoji'
+            }
+        },
+        {
+            key: 'sale_condo_biz',
+            title: '重要事項説明書［区分所有建物の売買・交換用］',
+            fingerprint: { texts: 385 },
+            map: {
+                4: 'licPref', 5: 'licCount', 6: 'licNo',
+                7: 'agentRegPref', 8: 'agentRegNo',
+                9: 'brokerAddr', 10: 'agentName', 11: 'agentOfficeAddrTel',
+                12: 'brokerName', 13: 'brokerCeo', 14: 'brokerTel',
+                47: 'sellerAddrBiz', 48: 'sellerNameBiz',
+                52: 'bldgName', 55: 'roomNo', 56: 'jukyoHyoji',
+                57: 'siteAddr', 65: 'bldgName', 68: 'areaWallCore'
+            }
+        },
+        {
+            key: 'rent_commercial',
+            title: '重要事項説明書［事業用建物貸借］',
+            fingerprint: { texts: 204 },
+            map: {
+                4: 'brokerAddrTel', 6: 'brokerName', 8: 'brokerCeo',
+                12: 'licPref', 13: 'licCount', 14: 'licNo',
+                18: 'agentName', 20: 'agentRegPref', 21: 'agentRegNo',
+                24: 'agentOffice', 26: 'agentOfficeAddrTel',
+                32: 'lessorAddr', 33: 'lessorName',
+                35: 'bldgName', 37: 'roomNo', 39: 'jukyoHyoji',
+                46: 'floorArea'
+            }
+        },
+        {
+            key: 'rent_land',
+            title: '重要事項説明書［土地貸借用］',
+            fingerprint: { texts: 210 },
+            map: {
+                5: 'brokerAddrTel', 7: 'brokerName', 9: 'brokerCeo',
+                13: 'licPref', 14: 'licCount', 15: 'licNo',
+                19: 'agentName', 21: 'agentRegPref', 22: 'agentRegNo',
+                25: 'agentOffice', 27: 'agentOfficeAddrTel',
+                33: 'siteAddr', 36: 'landArea'
+            }
+        },
+        // ---- 売買契約書（協会様式・一般売主） ----
+        {
+            key: 'ctr_condo_shikichiken',
+            title: '区分所有建物売買契約書（敷地権）',
+            fingerprint: { texts: 127 },
+            map: {
+                0: 'sellerName', 1: 'buyerName',
+                2: 'bldgName', 3: 'siteAddr', 8: 'roomNo',
+                13: 'areaWallCore', 27: 'landArea', 45: 'priceYen'
+            }
+        },
+        {
+            key: 'ctr_landhouse_kobo',
+            title: '不動産売買契約書',
+            fingerprint: { texts: 118 },
+            map: {
+                0: 'sellerName', 1: 'buyerName',
+                2: 'siteAddr', 22: 'landArea', 24: 'siteAddr',
+                35: 'bldgArea', 37: 'priceYen'
+            }
         }
-        // 残様式（土地売買・宅建業者用3種・事業用賃借・土地賃借）は順次追加
     ];
 
     // ===== JSZip 遅延読込 =====
@@ -125,6 +226,11 @@ var DisclosureDocx = (function() {
             agentOfficeAddrTel: joinNonEmpty([broker.address, broker.phone ? 'TEL:' + broker.phone : ''], '　'),
             sellerAddr: parties.sellerAddr || '',
             sellerName: parties.sellerName || '',
+            // 宅建業者売主用様式: 売主表示は未入力時に自社情報で補完
+            sellerAddrBiz: parties.sellerAddr || broker.address || '',
+            sellerNameBiz: parties.sellerName || broker.social_name || '',
+            brokerAddr: broker.address || '',
+            brokerTel: broker.phone || '',
             lessorAddr: parties.sellerAddr || '',
             lessorName: parties.sellerName || '',
             bldgName: name.replace(/\s*\d{1,4}\s*号?室?\s*$/, '') || name,
