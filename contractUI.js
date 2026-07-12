@@ -174,10 +174,24 @@ var ContractUI = (function() {
         html += '<textarea id="ctr-other-special" rows="3" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:4px;font-size:12px;">' + esc(currentOpts.special.otherSpecial || '') + '</textarea>';
         html += '</div>';
 
+        // 協会Word様式への自動差し込み（原本ベース・推奨）
+        html += '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:14px;margin-top:12px;">';
+        html += '<div style="font-weight:600;margin-bottom:4px;color:#166534;">協会Word様式へ自動入力（原本ベース・推奨）</div>';
+        html += '<div style="font-size:11.5px;color:#166534;line-height:1.7;margin-bottom:10px;">';
+        html += '協会公式の売買契約書Word様式に、当事者・物件表示・売買代金を自動入力して記入済みWordを生成します。';
+        html += '様式ファイルは templates／売買契約書 フォルダから選択してください（現在対応: 区分所有建物用（敷地権）／土地建物公簿用）。';
+        html += '</div>';
+        html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">';
+        html += '<input type="file" id="ctr-docx-file" accept=".docx" style="font-size:12px;">';
+        html += '<button id="ctr-docx-fill" class="btn btn-primary btn-sm">記入済みWordを生成</button>';
+        html += '</div>';
+        html += '<div id="ctr-docx-status" style="font-size:12px;margin-top:8px;"></div>';
+        html += '</div>';
+
         // アクション
         html += '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid #e3e8ef;">';
-        html += '<button id="ctr-preview" class="btn btn-outline">プレビュー</button>';
-        html += '<button id="ctr-export-pdf" class="btn btn-primary">契約書PDF出力</button>';
+        html += '<button id="ctr-preview" class="btn btn-outline">HTML下書き（参考）</button>';
+        html += '<button id="ctr-export-pdf" class="btn btn-primary">契約書PDF出力（参考）</button>';
         html += '<button id="ctr-export-both" class="btn btn-primary" title="重説+契約書を同時生成">重説と一括出力</button>';
         html += '</div>';
 
@@ -194,6 +208,61 @@ var ContractUI = (function() {
         document.getElementById('ctr-preview').onclick = preview;
         document.getElementById('ctr-export-pdf').onclick = exportPDF;
         document.getElementById('ctr-export-both').onclick = exportBoth;
+        document.getElementById('ctr-docx-fill').onclick = fillOfficialDocx;
+    }
+
+    // ===== 協会Word様式への差し込み =====
+    function val(id) {
+        var el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+    }
+
+    async function fillOfficialDocx() {
+        var status = document.getElementById('ctr-docx-status');
+        var fileInput = document.getElementById('ctr-docx-file');
+        function setStatus(msg, color) { status.textContent = msg; status.style.color = color || '#166534'; }
+
+        if (typeof DisclosureDocx === 'undefined') { setStatus('差し込みエンジンが読み込まれていません', '#dc2626'); return; }
+        if (!currentProp) { setStatus('先に対象物件を選択してください', '#dc2626'); return; }
+        if (!fileInput.files || !fileInput.files.length) { setStatus('様式ファイル（.docx）を選択してください', '#dc2626'); return; }
+
+        var master = {};
+        try { master = JSON.parse(localStorage.getItem('suumo_broker_master') || '{}'); } catch (e) {}
+        var broker = {
+            social_name: val('ctr-broker-name') || master.social_name || '',
+            license_number: val('ctr-broker-license') || master.license_number || '',
+            address: val('ctr-broker-address') || master.address || '',
+            phone: val('ctr-broker-tel') || master.phone || ''
+        };
+        var agent = {
+            agentName: val('ctr-agent-name'),
+            agentReg: val('ctr-agent-license'),
+            office: broker.social_name
+        };
+        var parties = {
+            sellerName: val('ctr-seller-name'),
+            buyerName: val('ctr-buyer-name')
+        };
+
+        setStatus('生成中…');
+        try {
+            var buf = await fileInput.files[0].arrayBuffer();
+            var values = DisclosureDocx.buildValues(currentProp, broker, agent, parties);
+            var result = await DisclosureDocx.fill(buf, values);
+
+            var propName = (currentProp['物件名'] || '物件').replace(/[\\/:*?"<>|]/g, '');
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(result.blob);
+            a.download = '記入済_売買契約書_' + propName + '.docx';
+            a.click();
+            setTimeout(function() { URL.revokeObjectURL(a.href); }, 5000);
+
+            var msg = result.formatTitle + ' に ' + result.filled + '/' + result.mappable + ' 項目を自動入力しました。手付金・支払期日等の取引条件はWord上でご確認・追記ください。';
+            if (result.warnings.length) msg += '　注意: ' + result.warnings.join(' ');
+            setStatus(msg, result.warnings.length ? '#b45309' : '#166534');
+        } catch (e) {
+            setStatus('生成に失敗しました: ' + (e && e.message ? e.message : e), '#dc2626');
+        }
     }
 
     function inputRow(label, id, value, placeholder) {

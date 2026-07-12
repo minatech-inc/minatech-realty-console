@@ -239,8 +239,14 @@ var DisclosureDocx = (function() {
             siteAddr: prop['所在地'] || '',
             areaWallCore: prop['専有面積(㎡)'] || prop['面積(㎡)'] || '',
             landArea: prop['土地面積(㎡)'] || '',
+            bldgArea: prop['建物面積(㎡)'] || '',
             madori: prop['間取り'] || '',
-            floorArea: prop['専有面積(㎡)'] || prop['面積(㎡)'] || ''
+            floorArea: prop['専有面積(㎡)'] || prop['面積(㎡)'] || '',
+            buyerName: parties.buyerName || '',
+            priceYen: (function() {
+                var man = parseFloat(String(prop['価格(万円)'] || '').replace(/[^\d.]/g, ''));
+                return isNaN(man) ? '' : (man * 10000).toLocaleString('ja-JP');
+            })()
         };
     }
 

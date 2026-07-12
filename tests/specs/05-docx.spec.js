@@ -159,6 +159,56 @@ test.describe('協会Word様式差し込み', () => {
         fs.writeFileSync(path.join(ARTIFACTS_DIR, '記入済_重要事項説明書（住宅用賃借）.docx'), Buffer.from(result.b64, 'base64'));
     });
 
+    test('売買契約書2様式: 当事者・物件・代金が正着する', async ({ page }) => {
+        test.setTimeout(120 * 1000);
+        await page.goto('/index.html');
+        await page.waitForFunction(() => typeof DisclosureDocx !== 'undefined');
+
+        const CONTRACTS = [
+            ['売買契約書/一般売主/区分所有建物用（敷地権）.docx', 'ctr_condo_shikichiken'],
+            ['売買契約書/一般売主/土地建物公簿用.docx', 'ctr_landhouse_kobo']
+        ];
+        const prop = {
+            '物件名': 'シーサイド湘南 505号室', '所在地': '神奈川県藤沢市南藤沢3丁目',
+            '専有面積(㎡)': '42.5', '土地面積(㎡)': '120.5', '建物面積(㎡)': '95.2', '価格(万円)': '4800'
+        };
+        const parties = { sellerAddr: '東京都世田谷区1-2-3', sellerName: '山田 太郎', buyerName: '鈴木 一郎' };
+
+        ensureDir();
+        for (const [file, expectedKey] of CONTRACTS) {
+            const result = await page.evaluate(async ({ file, sample, prop, parties }) => {
+                const url = '/templates/' + file.split('/').map(encodeURIComponent).join('/');
+                const res = await fetch(url);
+                if (!res.ok) return { error: file + ' 取得失敗 ' + res.status };
+                const buf = await res.arrayBuffer();
+                const values = DisclosureDocx.buildValues(prop, sample.broker, sample.agent, parties);
+                const out = await DisclosureDocx.fill(buf, values);
+                const zip = await JSZip.loadAsync(out.blob);
+                const plain = (await zip.file('word/document.xml').async('string')).replace(/<[^>]+>/g, '');
+                return {
+                    formatKey: out.formatKey, filled: out.filled, mappable: out.mappable,
+                    warnings: out.warnings,
+                    hasSeller: plain.indexOf('山田 太郎') >= 0,
+                    hasBuyer: plain.indexOf('鈴木 一郎') >= 0,
+                    hasPrice: plain.indexOf('48,000,000') >= 0,
+                    b64: await zip.generateAsync({ type: 'base64' })
+                };
+            }, { file, sample: SAMPLE, prop, parties });
+
+            expect(result.error, result.error).toBeUndefined();
+            expect(result.formatKey, `${file} の様式判別`).toBe(expectedKey);
+            expect(result.filled, `${file} の差し込み件数`).toBe(result.mappable);
+            expect(result.warnings).toHaveLength(0);
+            expect(result.hasSeller, '売主名').toBe(true);
+            expect(result.hasBuyer, '買主名').toBe(true);
+            expect(result.hasPrice, '売買代金（円換算）').toBe(true);
+            fs.writeFileSync(
+                path.join(ARTIFACTS_DIR, '記入済_' + path.basename(file)),
+                Buffer.from(result.b64, 'base64')
+            );
+        }
+    });
+
     test('免許番号パース: 各表記ゆれに対応する', async ({ page }) => {
         await page.goto('/index.html');
         await page.waitForFunction(() => typeof DisclosureDocx !== 'undefined');
