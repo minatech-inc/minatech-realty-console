@@ -344,6 +344,12 @@
             if (typeof ImageProcessorUI !== 'undefined') ImageProcessorUI.open();
         });
 
+        // 取引進行管理
+        var btnTransaction = document.getElementById('btn-transaction-header');
+        if (btnTransaction) btnTransaction.addEventListener('click', function() {
+            if (typeof TransactionUI !== 'undefined') TransactionUI.open();
+        });
+
         // ポータル横断チェッカー
         var btnPortalChecker = document.getElementById('btn-portal-checker-header');
         if (btnPortalChecker) btnPortalChecker.addEventListener('click', function() {

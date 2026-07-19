@@ -166,6 +166,17 @@ var DisclosureDocx = (function() {
                 2: 'siteAddr', 22: 'landArea', 24: 'siteAddr',
                 35: 'bldgArea', 37: 'priceYen'
             }
+        },
+        // ---- 申込書類（取引進行管理から使用） ----
+        {
+            key: 'app_kaitsuke_condo',
+            title: '買付証明書(区分所有建物)',
+            fingerprint: { texts: 60 },
+            map: {
+                1: 'priceYen',
+                26: 'bldgName', 27: 'siteAddr', 31: 'roomNo',
+                36: 'areaWallCore'
+            }
         }
     ];
 
