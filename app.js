@@ -350,6 +350,12 @@
             if (typeof TransactionUI !== 'undefined') TransactionUI.open();
         });
 
+        // マイソク取込・登録（実業務用）
+        var btnIntake = document.getElementById('btn-intake-header');
+        if (btnIntake) btnIntake.addEventListener('click', function() {
+            if (typeof IntakeUI !== 'undefined') IntakeUI.open();
+        });
+
         // ポータル横断チェッカー
         var btnPortalChecker = document.getElementById('btn-portal-checker-header');
         if (btnPortalChecker) btnPortalChecker.addEventListener('click', function() {

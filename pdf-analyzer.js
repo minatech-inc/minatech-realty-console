@@ -80,6 +80,8 @@
     });
 
     function log(msg, kind) {
+        if (externalLog) { externalLog(msg, kind); return; }
+        if (!els.log) return;
         var div = document.createElement('div');
         div.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
         if (kind) div.className = 'log-' + kind;
@@ -88,10 +90,45 @@
     }
 
     function setProgress(pct, text) {
+        if (externalProgress) { externalProgress(pct, text); return; }
+        if (!els.progress) return;
         els.progress.style.display = 'block';
         els.progressFill.style.width = Math.min(100, Math.max(0, pct)) + '%';
         if (text) els.progressText.textContent = text;
     }
+
+    // ===== 外部モジュール向けAPI（取込画面などから利用） =====
+    // ログ/進捗をコールバックへ差し替えたうえで抽出のみを実行し、テキストを返す
+    var externalLog = null;
+    var externalProgress = null;
+
+    function extractAll(fileList, callbacks) {
+        callbacks = callbacks || {};
+        externalLog = callbacks.onLog || function() {};
+        externalProgress = callbacks.onProgress || function() {};
+        var files = Array.from(fileList);
+        return new Promise(function(resolve) {
+            (function next(idx, accum) {
+                if (idx >= files.length) {
+                    externalProgress(100, '完了');
+                    externalLog = null;
+                    externalProgress = null;
+                    resolve(accum.join('\n\n---\n\n'));
+                    return;
+                }
+                var f = files[idx];
+                (callbacks.onProgress || function() {})((idx / files.length) * 100, '(' + (idx + 1) + '/' + files.length + ') ' + f.name);
+                extractFromFile(f).then(function(text) {
+                    if (text && text.trim()) accum.push(text);
+                    next(idx + 1, accum);
+                }).catch(function() {
+                    next(idx + 1, accum);
+                });
+            })(0, []);
+        });
+    }
+
+    window.PdfAnalyzer = { extractAll: extractAll };
 
     function handleFiles(fileList) {
         var files = Array.from(fileList);
