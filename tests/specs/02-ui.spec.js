@@ -95,8 +95,12 @@ test.describe('出力機能', () => {
     test('PDFレポート: ダウンロードが発生する', async ({ page }) => {
         test.setTimeout(240 * 1000);
         await analyzeSample(page);
-        // html2canvas + jsPDF の描画が重く、フルスイート実行時の高負荷では90秒を超えるため余裕を持たせる
-        const dl = page.waitForEvent('download', { timeout: 200000 });
+        // CDNライブラリの読込を保証（未読込だとダウンロードが発生せずタイムアウトする）
+        await page.waitForFunction(
+            () => typeof window.jspdf !== 'undefined' && typeof window.html2canvas !== 'undefined',
+            null, { timeout: 60000 }
+        );
+        const dl = page.waitForEvent('download', { timeout: 120000 });
         await page.click('#btn-export-pdf');
         const download = await dl;
         expect(download.suggestedFilename()).toMatch(/\.pdf$/i);

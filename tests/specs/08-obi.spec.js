@@ -30,11 +30,14 @@ test.describe('マイソク帯替え', () => {
         await page.waitForFunction(() => typeof ObiUI !== 'undefined');
     });
 
-    test('モーダル表示: 帯未登録時は登録を促す', async ({ page }) => {
+    test('モーダル表示: 帯未登録時は同梱の標準帯（自社フッター）が自動適用される', async ({ page }) => {
         await page.evaluate(() => localStorage.removeItem('rc_obi_image'));
         await page.click('#btn-obi-header');
         await expect(page.locator('#obi-modal')).toBeVisible();
-        await expect(page.locator('#obi-status')).toContainText('未登録');
+        await expect(page.locator('#obi-status')).toContainText('標準帯を適用中', { timeout: 15000 });
+        // localStorage に保存され、内容に正しい免許番号入りの帯が入る（サイズで概認）
+        const stored = await page.evaluate(() => (localStorage.getItem('rc_obi_image') || '').length);
+        expect(stored).toBeGreaterThan(10000);
     });
 
     test('PDF取込→帯合成→下部の色が帯色に置き換わる→出力保存 @heavy', async ({ page }) => {

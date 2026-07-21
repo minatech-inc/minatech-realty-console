@@ -1224,13 +1224,37 @@
     document.head.appendChild(style);
 
     // ======== PDFレポート出力 ========
+    // PDF出力に必要なCDNライブラリの動的再読込（初回読込失敗時のフォールバック）
+    function ensurePdfLibs_() {
+        function load(src, isLoaded) {
+            return new Promise(function(resolve, reject) {
+                if (isLoaded()) { resolve(); return; }
+                var s = document.createElement('script');
+                s.src = src;
+                s.onload = function() { isLoaded() ? resolve() : reject(new Error(src)); };
+                s.onerror = function() { reject(new Error(src)); };
+                document.head.appendChild(s);
+            });
+        }
+        return load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+                function() { return typeof window.jspdf !== 'undefined'; })
+            .then(function() {
+                return load('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+                    function() { return typeof window.html2canvas !== 'undefined'; });
+            });
+    }
+
     function exportPDF() {
         if (!analyzedProperties.length) {
             showToast('解析結果がありません', 'warning');
             return;
         }
         if (typeof window.jspdf === 'undefined' || typeof window.html2canvas === 'undefined') {
-            showToast('PDFライブラリの読み込みに失敗しました', 'error');
+            // CDN読込失敗時は一度だけ動的再読込を試みる（ネットワーク瞬断対策）
+            showToast('PDFライブラリを再読込しています…', 'info');
+            ensurePdfLibs_().then(function() { exportPDF(); }).catch(function() {
+                showToast('PDFライブラリの読み込みに失敗しました（ネットワークをご確認ください）', 'error');
+            });
             return;
         }
         var cards = document.getElementById('property-cards');

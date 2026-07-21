@@ -54,7 +54,8 @@ var ObiUI = (function() {
             '<div style="font-weight:600;">Step 1: 自社帯（フッター画像）' +
             '<span id="obi-status" style="font-size:11.5px;font-weight:400;margin-left:10px;color:' + (hasObi ? '#047857">登録済み（自動適用）' : '#b45309">未登録 — PNG/JPGを選択してください') + '</span></div>' +
             '<div><input type="file" id="obi-band-file" accept="image/*" style="display:none;">' +
-            '<button id="obi-band-btn" class="btn btn-outline btn-sm">' + (hasObi ? '帯画像を差し替え' : '帯画像を登録') + '</button></div></div>' +
+            '<button id="obi-band-default" class="btn btn-primary btn-sm">標準帯を使用</button> ' +
+            '<button id="obi-band-btn" class="btn btn-outline btn-sm">' + (hasObi ? '帯画像を差し替え' : '別の帯画像を登録') + '</button></div></div>' +
             '<div id="obi-band-preview" style="margin-top:8px;">' + (hasObi ? '<img src="' + getObi() + '" style="max-width:100%;border:1px solid #eee;border-radius:6px;">' : '') + '</div>' +
             '</div>' +
 
@@ -85,6 +86,10 @@ var ObiUI = (function() {
         document.body.appendChild(div.firstChild);
 
         document.getElementById('obi-close').onclick = close;
+
+        // 標準帯（同梱の自社フッター）: 未登録時は自動適用
+        document.getElementById('obi-band-default').onclick = function() { loadDefaultBand(true); };
+        if (!hasObi) loadDefaultBand(false);
 
         // 帯画像登録
         var bandFile = document.getElementById('obi-band-file');
@@ -130,6 +135,34 @@ var ObiUI = (function() {
         };
         document.getElementById('obi-dl-png').onclick = function() { download('png'); };
         document.getElementById('obi-dl-pdf').onclick = function() { download('pdf'); };
+    }
+
+    // ===== 標準帯の読込（obi-footer.png を localStorage へ） =====
+    function loadDefaultBand(userTriggered) {
+        fetch('obi-footer.png?v=20260720', { cache: 'no-store' })
+            .then(function(res) {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.blob();
+            })
+            .then(function(blob) {
+                return new Promise(function(resolve, reject) {
+                    var reader = new FileReader();
+                    reader.onload = function() { resolve(reader.result); };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            })
+            .then(function(dataURL) {
+                try { localStorage.setItem(OBI_KEY, dataURL); } catch (e) {}
+                var st = document.getElementById('obi-status');
+                if (st) { st.textContent = '標準帯を適用中（自動）'; st.style.color = '#047857'; }
+                var pv = document.getElementById('obi-band-preview');
+                if (pv) pv.innerHTML = '<img src="' + dataURL + '" style="max-width:100%;border:1px solid #eee;border-radius:6px;">';
+                compose();
+            })
+            .catch(function(e) {
+                if (userTriggered) alert('標準帯の読込に失敗しました: ' + e.message);
+            });
     }
 
     // ===== 元マイソク読込 =====
