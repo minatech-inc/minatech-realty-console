@@ -356,6 +356,12 @@
             if (typeof IntakeUI !== 'undefined') IntakeUI.open();
         });
 
+        // マイソク帯替え
+        var btnObi = document.getElementById('btn-obi-header');
+        if (btnObi) btnObi.addEventListener('click', function() {
+            if (typeof ObiUI !== 'undefined') ObiUI.open();
+        });
+
         // ポータル横断チェッカー
         var btnPortalChecker = document.getElementById('btn-portal-checker-header');
         if (btnPortalChecker) btnPortalChecker.addEventListener('click', function() {
